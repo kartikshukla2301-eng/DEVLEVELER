@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -20,8 +21,16 @@ import {
   ChevronRight,
   FileDown,
   Terminal,
+  Search,
+  FileText,
+  ExternalLink,
 } from "lucide-react";
 import { analyzeLinkedInAction, generateUnifiedReportAction } from "@/actions/intelligence";
+import { analyzeGitHub } from "@/actions/github";
+import { analyzeResumeAction } from "@/actions/resume";
+import { analyzePortfolioAction } from "@/actions/portfolio";
+import { getTelemetryStatusAction } from "@/actions/telemetry";
+import type { TelemetrySource, TelemetryStatus } from "@/types";
 import { cn } from "@/lib/utils";
 
 function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -102,6 +111,7 @@ export interface IntelligenceReport {
   milestones: MilestoneItem[];
   skillGapMatrix: SkillGapMatrix;
   cachedAt?: Date | string;
+  isStale?: boolean;
   linkedin?: string;
   resume?: string;
   portfolio?: string;
@@ -109,31 +119,144 @@ export interface IntelligenceReport {
 
 interface IntelligenceClientProps {
   initialReport: IntelligenceReport | null;
+  initialTelemetry?: TelemetryStatus;
   connectedAccounts: Record<string, string>;
+  userId?: string;
   userName?: string;
 }
 
 export function IntelligenceClient({
   initialReport,
+  initialTelemetry,
   connectedAccounts,
   userName = "Developer",
 }: IntelligenceClientProps) {
+  const router = useRouter();
   const [report, setReport] = useState<IntelligenceReport | null>(initialReport);
+  const [telemetry, setTelemetry] = useState<TelemetryStatus>(
+    initialTelemetry || {
+      github: {
+        connected: Boolean(connectedAccounts?.github),
+        username: connectedAccounts?.github || null,
+        avatarUrl: null,
+        score: null,
+        publicRepos: 0,
+        analyzedAt: null,
+      },
+      linkedin: {
+        synced: Boolean(initialReport?.linkedin || connectedAccounts?.linkedin),
+        url: initialReport?.linkedin || connectedAccounts?.linkedin || null,
+        headline: null,
+        analyzedAt: null,
+      },
+      resume: {
+        available: Boolean(initialReport?.resume),
+        analyzed: Boolean(initialReport?.resume),
+        fileName: initialReport?.resume || null,
+        atsScore: null,
+        analyzedAt: null,
+      },
+      portfolio: {
+        available: Boolean(initialReport?.portfolio),
+        analyzed: Boolean(initialReport?.portfolio),
+        url: initialReport?.portfolio || null,
+        score: null,
+        analyzedAt: null,
+      },
+    }
+  );
+
+  // Active source selection: intelligently select first incomplete source, fallback to github
+  const [activeSource, setActiveSource] = useState<TelemetrySource>(() => {
+    if (!initialTelemetry?.github.connected && !connectedAccounts?.github) return "github";
+    if (!initialTelemetry?.linkedin.synced && !initialReport?.linkedin && !connectedAccounts?.linkedin) return "linkedin";
+    if (!initialTelemetry?.resume.available && !initialReport?.resume) return "resume";
+    if (!initialTelemetry?.portfolio.available && !initialReport?.portfolio) return "portfolio";
+    return "github";
+  });
+
+  // GitHub form state
+  const [githubUsername, setGithubUsername] = useState(
+    telemetry.github.username || ""
+  );
+  const [githubLoading, setGithubLoading] = useState(false);
+  const [showSwitchGithub, setShowSwitchGithub] = useState(false);
+
+  // LinkedIn form state
   const [linkedinUrl, setLinkedinUrl] = useState(
-    connectedAccounts?.linkedin || ""
+    telemetry.linkedin.url || connectedAccounts?.linkedin || ""
   );
   const [linkedinBio, setLinkedinBio] = useState("");
-  const [analyzing, setAnalyzing] = useState(false);
+  const [analyzingLinkedin, setAnalyzingLinkedin] = useState(false);
+
+  // Resume form state
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
+  const [resumeLoading, setResumeLoading] = useState(false);
+
+  // Portfolio form state
+  const [portfolioUrl, setPortfolioUrl] = useState(
+    telemetry.portfolio.url || ""
+  );
+  const [portfolioLoading, setPortfolioLoading] = useState(false);
+
   const [rebuilding, setRebuilding] = useState(false);
   const [benchmarkRole, setBenchmarkRole] = useState("Senior Full-Stack Architect [Staff Track]");
   const [marketBase, setMarketBase] = useState("Global / US Remote Tier-1");
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
+  const refreshTelemetryAndReport = async () => {
+    try {
+      const [telRes, repRes] = await Promise.all([
+        getTelemetryStatusAction(),
+        generateUnifiedReportAction(),
+      ]);
+      if (telRes.success && telRes.data) {
+        setTelemetry(telRes.data);
+      }
+      if (repRes.success && repRes.data) {
+        setReport(repRes.data as IntelligenceReport);
+      }
+      router.refresh();
+    } catch (e) {
+      console.warn("Failed to refresh telemetry and report:", e);
+    }
+  };
+
+  const handleGitHubSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const targetUser = githubUsername.trim() || telemetry.github.username;
+    if (!targetUser) return;
+
+    setGithubLoading(true);
+    setMessage(null);
+
+    try {
+      const res = await analyzeGitHub(targetUser);
+      if (res.success && res.data) {
+        setMessage({
+          type: "success",
+          text: `GitHub identity (@${res.data.user.login}) synced and intelligence dossier updated!`,
+        });
+        setShowSwitchGithub(false);
+        await refreshTelemetryAndReport();
+      } else {
+        setMessage({
+          type: "error",
+          text: res.error || "Failed to analyze GitHub profile.",
+        });
+      }
+    } catch {
+      setMessage({ type: "error", text: "An error occurred during GitHub sync." });
+    } finally {
+      setGithubLoading(false);
+    }
+  };
+
   const handleLinkedInSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!linkedinUrl.trim()) return;
 
-    setAnalyzing(true);
+    setAnalyzingLinkedin(true);
     setMessage(null);
 
     try {
@@ -144,17 +267,76 @@ export function IntelligenceClient({
           text: "LinkedIn profile analyzed and incorporated into Dev Intelligence!",
         });
         setLinkedinBio("");
-        const reportRes = await generateUnifiedReportAction();
-        if (reportRes.success && reportRes.data) {
-          setReport(reportRes.data as IntelligenceReport);
-        }
+        await refreshTelemetryAndReport();
       } else {
-        setMessage({ type: "error", text: res.error || "Failed to analyze LinkedIn profile." });
+        setMessage({
+          type: "error",
+          text: res.error || "Failed to analyze LinkedIn profile.",
+        });
       }
     } catch {
-      setMessage({ type: "error", text: "An error occurred during analysis." });
+      setMessage({ type: "error", text: "An error occurred during LinkedIn analysis." });
     } finally {
-      setAnalyzing(false);
+      setAnalyzingLinkedin(false);
+    }
+  };
+
+  const handleResumeSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resumeFile) return;
+
+    setResumeLoading(true);
+    setMessage(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", resumeFile);
+      const res = await analyzeResumeAction(formData);
+      if (res.success && res.data) {
+        setMessage({
+          type: "success",
+          text: `Resume (${resumeFile.name}) analyzed (${res.data.atsScore}% ATS score) and intelligence updated!`,
+        });
+        setResumeFile(null);
+        await refreshTelemetryAndReport();
+      } else {
+        setMessage({
+          type: "error",
+          text: res.error || "Failed to analyze resume.",
+        });
+      }
+    } catch {
+      setMessage({ type: "error", text: "An error occurred during resume analysis." });
+    } finally {
+      setResumeLoading(false);
+    }
+  };
+
+  const handlePortfolioSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!portfolioUrl.trim()) return;
+
+    setPortfolioLoading(true);
+    setMessage(null);
+
+    try {
+      const res = await analyzePortfolioAction(portfolioUrl);
+      if (res.success && res.data) {
+        setMessage({
+          type: "success",
+          text: `Portfolio audited (Score: ${res.data.performanceScore}/100) and intelligence updated!`,
+        });
+        await refreshTelemetryAndReport();
+      } else {
+        setMessage({
+          type: "error",
+          text: res.error || "Failed to audit portfolio website.",
+        });
+      }
+    } catch {
+      setMessage({ type: "error", text: "An error occurred during portfolio audit." });
+    } finally {
+      setPortfolioLoading(false);
     }
   };
 
@@ -217,6 +399,38 @@ export function IntelligenceClient({
             <AlertCircle className="h-4 w-4 text-rose-600 shrink-0" />
           )}
           <span>{message.text}</span>
+        </div>
+      )}
+
+      {/* Stale Report Alert */}
+      {report?.isStale && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl border border-amber-200 bg-amber-50 text-xs text-amber-900 shadow-xs">
+          <div className="flex items-center gap-2.5">
+            <AlertCircle className="h-4 w-4 text-amber-600 shrink-0" />
+            <div>
+              <span className="font-bold">Telemetry Updated:</span>
+              <span className="ml-1 text-amber-800">
+                New telemetry signals were synced since this dossier was generated. Re-sync to incorporate the latest findings.
+              </span>
+            </div>
+          </div>
+          <button
+            onClick={handleRebuildReport}
+            disabled={rebuilding}
+            className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600 text-white font-semibold hover:bg-amber-700 disabled:opacity-50 transition-colors shrink-0 cursor-pointer shadow-xs"
+          >
+            {rebuilding ? (
+              <>
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                <span>Compiling Dossier...</span>
+              </>
+            ) : (
+              <>
+                <RefreshCw className="h-3.5 w-3.5" />
+                <span>Update Intelligence Dossier</span>
+              </>
+            )}
+          </button>
         </div>
       )}
 
@@ -1083,126 +1297,596 @@ export function IntelligenceClient({
         <div>
           <h4 className="text-base font-bold text-on-surface font-headline">Connected Telemetry Channels</h4>
           <p className="text-xs text-on-surface-variant mt-0.5">
-            Audit and sync your public profiles to enrich DevLeveler&apos;s developer intelligence engines.
+            Audit and sync your public profiles to enrich DevLeveler&apos;s developer intelligence engines. Select a channel on the right to manage its sync.
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* LinkedIn Sync Form */}
-          <form onSubmit={handleLinkedInSubmit} className="space-y-4">
-            <div className="flex items-center gap-2">
-              <LinkedinIcon className="h-5 w-5 text-blue-600" />
-              <span className="text-xs font-bold text-on-surface">Sync LinkedIn Profile</span>
-            </div>
+        <div className="grid gap-6 lg:grid-cols-12">
+          {/* LEFT PANEL: Selected Channel Sync / Configuration (7 cols) */}
+          <div className="lg:col-span-7 bg-surface-container-low/40 p-5 rounded-xl border border-outline-variant/30 flex flex-col justify-between">
+            {/* A. GITHUB INTEGRATION */}
+            {activeSource === "github" && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <GithubIcon className="h-5 w-5 text-on-surface" />
+                    <span className="text-xs font-bold text-on-surface">GitHub Integration</span>
+                  </div>
+                  {telemetry.github.connected && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200 font-mono">
+                      <CheckCircle className="h-3 w-3" /> CONNECTED
+                    </span>
+                  )}
+                </div>
 
-            <div className="space-y-1.5">
-              <label className="text-[11px] uppercase font-mono font-bold text-on-surface-variant tracking-wider">
-                Profile URL
-              </label>
-              <input
-                type="url"
-                value={linkedinUrl}
-                onChange={(e) => setLinkedinUrl(e.target.value)}
-                placeholder="https://linkedin.com/in/username"
-                className="w-full rounded-xl border border-outline-variant/50 bg-surface-container-lowest px-3.5 py-2.5 text-xs text-on-surface placeholder:text-outline focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary shadow-xs"
-                required
-              />
-            </div>
+                {telemetry.github.connected && !showSwitchGithub ? (
+                  <div className="rounded-xl border border-outline-variant/40 bg-surface-container-lowest p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-surface-container border border-outline-variant/40 text-on-surface font-bold text-sm shadow-xs overflow-hidden">
+                          {telemetry.github.avatarUrl ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={telemetry.github.avatarUrl}
+                              alt={telemetry.github.username || "GitHub"}
+                              className="h-10 w-10 rounded-xl object-cover"
+                            />
+                          ) : (
+                            <GithubIcon className="h-5 w-5" />
+                          )}
+                        </div>
+                        <div>
+                          <a
+                            href={`https://github.com/${telemetry.github.username}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs font-bold text-on-surface hover:text-primary transition-colors flex items-center gap-1 group"
+                          >
+                            <span>@{telemetry.github.username}</span>
+                            <ExternalLink className="h-3 w-3 text-outline group-hover:text-primary transition-colors" />
+                          </a>
+                          <div className="text-[11px] text-on-surface-variant flex items-center gap-2 mt-0.5 font-mono">
+                            <span>{telemetry.github.publicRepos} Repos</span>
+                            <span>•</span>
+                            <span>Score: {telemetry.github.score != null ? `${telemetry.github.score}/100` : "Active"}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
-            <div className="space-y-1.5">
-              <label className="text-[11px] uppercase font-mono font-bold text-on-surface-variant tracking-wider flex items-center justify-between">
-                <span>Paste Bio / Summary (Optional)</span>
-                <span className="text-[10px] text-outline font-normal uppercase tracking-normal">
-                  Helps audit private sections
-                </span>
-              </label>
-              <textarea
-                value={linkedinBio}
-                onChange={(e) => setLinkedinBio(e.target.value)}
-                placeholder="Paste your LinkedIn Summary, About, or Experience texts here..."
-                rows={3}
-                className="w-full rounded-xl border border-outline-variant/50 bg-surface-container-lowest px-3.5 py-2.5 text-xs text-on-surface placeholder:text-outline focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary resize-none shadow-xs"
-              />
-            </div>
+                    {telemetry.github.analyzedAt && (
+                      <div className="text-[10px] font-mono text-outline">
+                        Last Synced: {new Date(telemetry.github.analyzedAt).toLocaleDateString()} at {new Date(telemetry.github.analyzedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                      </div>
+                    )}
 
-            <button
-              type="submit"
-              disabled={analyzing}
-              className="flex items-center justify-center gap-2 w-full rounded-xl bg-primary-container py-2.5 text-xs font-semibold text-white hover:opacity-95 disabled:opacity-50 transition-all cursor-pointer shadow-xs"
-            >
-              {analyzing ? (
-                <>
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  <span>Auditing Profile...</span>
-                </>
-              ) : (
-                <span>Sync LinkedIn Profile</span>
-              )}
-            </button>
-          </form>
+                    <div className="flex items-center gap-2 pt-1">
+                      <button
+                        type="button"
+                        onClick={handleGitHubSubmit}
+                        disabled={githubLoading}
+                        className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-primary-container py-2 text-xs font-semibold text-white hover:opacity-95 disabled:opacity-50 transition-all cursor-pointer shadow-xs"
+                      >
+                        {githubLoading ? (
+                          <>
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            <span>Syncing GitHub...</span>
+                          </>
+                        ) : (
+                          <>
+                            <RefreshCw className="h-3.5 w-3.5" />
+                            <span>Refresh GitHub Data</span>
+                          </>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setGithubUsername(telemetry.github.username || "");
+                          setShowSwitchGithub(true);
+                        }}
+                        className="px-3 py-2 rounded-xl border border-outline-variant/50 bg-surface-container text-xs font-medium text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer shadow-xs"
+                      >
+                        Switch Account
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <form onSubmit={handleGitHubSubmit} className="space-y-3">
+                    <div className="space-y-1.5">
+                      <label className="text-[11px] uppercase font-mono font-bold text-on-surface-variant tracking-wider flex items-center justify-between">
+                        <span>GitHub Username</span>
+                        {showSwitchGithub && (
+                          <button
+                            type="button"
+                            onClick={() => setShowSwitchGithub(false)}
+                            className="text-[10px] text-primary hover:underline font-normal uppercase tracking-normal cursor-pointer"
+                          >
+                            Cancel
+                          </button>
+                        )}
+                      </label>
+                      <div className="relative">
+                        <Search className="absolute left-3.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-outline" />
+                        <input
+                          type="text"
+                          value={githubUsername}
+                          onChange={(e) => setGithubUsername(e.target.value)}
+                          placeholder="e.g. torvalds, gaearon"
+                          className="w-full rounded-xl border border-outline-variant/50 bg-surface-container-lowest pl-9 pr-3.5 py-2.5 text-xs text-on-surface placeholder:text-outline focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary shadow-xs font-mono"
+                          required
+                        />
+                      </div>
+                      <p className="text-[10px] text-on-surface-variant">
+                        Fetches repository telemetry, commit rhythm, languages, and repo health scores.
+                      </p>
+                    </div>
 
-          {/* Quick Channels Audit Status */}
-          <div className="space-y-4 bg-surface-container-low p-5 rounded-xl border border-outline-variant/30 flex flex-col justify-between">
+                    <button
+                      type="submit"
+                      disabled={githubLoading}
+                      className="flex items-center justify-center gap-2 w-full rounded-xl bg-primary-container py-2.5 text-xs font-semibold text-white hover:opacity-95 disabled:opacity-50 transition-all cursor-pointer shadow-xs"
+                    >
+                      {githubLoading ? (
+                        <>
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          <span>Auditing GitHub Profile...</span>
+                        </>
+                      ) : (
+                        <span>Connect &amp; Sync GitHub</span>
+                      )}
+                    </button>
+                  </form>
+                )}
+              </div>
+            )}
+
+            {/* B. LINKEDIN SYNC */}
+            {activeSource === "linkedin" && (
+              <form onSubmit={handleLinkedInSubmit} className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <LinkedinIcon className="h-5 w-5 text-blue-600" />
+                    <span className="text-xs font-bold text-on-surface">LinkedIn Sync</span>
+                  </div>
+                  {telemetry.linkedin.synced && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200 font-mono">
+                      <CheckCircle className="h-3 w-3" /> SYNCED
+                    </span>
+                  )}
+                </div>
+
+                {telemetry.linkedin.headline && (
+                  <div className="p-3 rounded-xl bg-surface-container-lowest border border-outline-variant/30 text-[11px] text-on-surface-variant flex items-center justify-between">
+                    <div className="truncate max-w-[80%]">
+                      <span className="font-semibold text-on-surface">Verified Title: </span>
+                      <span>{telemetry.linkedin.headline}</span>
+                    </div>
+                    {telemetry.linkedin.analyzedAt && (
+                      <span className="text-[10px] font-mono text-outline shrink-0">
+                        {new Date(telemetry.linkedin.analyzedAt).toLocaleDateString()}
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                <div className="space-y-1.5">
+                  <label className="text-[11px] uppercase font-mono font-bold text-on-surface-variant tracking-wider">
+                    Profile URL
+                  </label>
+                  <input
+                    type="url"
+                    value={linkedinUrl}
+                    onChange={(e) => setLinkedinUrl(e.target.value)}
+                    placeholder="https://linkedin.com/in/username"
+                    className="w-full rounded-xl border border-outline-variant/50 bg-surface-container-lowest px-3.5 py-2.5 text-xs text-on-surface placeholder:text-outline focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary shadow-xs"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[11px] uppercase font-mono font-bold text-on-surface-variant tracking-wider flex items-center justify-between">
+                    <span>Paste Bio / Summary (Optional)</span>
+                    <span className="text-[10px] text-outline font-normal uppercase tracking-normal">
+                      Helps audit private sections
+                    </span>
+                  </label>
+                  <textarea
+                    value={linkedinBio}
+                    onChange={(e) => setLinkedinBio(e.target.value)}
+                    placeholder="Paste your LinkedIn Summary, About, or Experience texts here..."
+                    rows={3}
+                    className="w-full rounded-xl border border-outline-variant/50 bg-surface-container-lowest px-3.5 py-2.5 text-xs text-on-surface placeholder:text-outline focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary resize-none shadow-xs"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={analyzingLinkedin}
+                  className="flex items-center justify-center gap-2 w-full rounded-xl bg-primary-container py-2.5 text-xs font-semibold text-white hover:opacity-95 disabled:opacity-50 transition-all cursor-pointer shadow-xs"
+                >
+                  {analyzingLinkedin ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      <span>Auditing Profile...</span>
+                    </>
+                  ) : (
+                    <span>{telemetry.linkedin.synced ? "Re-sync LinkedIn Profile" : "Sync LinkedIn Profile"}</span>
+                  )}
+                </button>
+              </form>
+            )}
+
+            {/* C. RESUME ANALYSIS */}
+            {activeSource === "resume" && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <FileCode className="h-5 w-5 text-indigo-600" />
+                    <span className="text-xs font-bold text-on-surface">Resume Telemetry Channel</span>
+                  </div>
+                  {telemetry.resume.analyzed && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200 font-mono">
+                      <CheckCircle className="h-3 w-3" /> ANALYZED
+                    </span>
+                  )}
+                </div>
+
+                {telemetry.resume.available && (
+                  <div className="rounded-xl border border-outline-variant/40 bg-surface-container-lowest p-4 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <FileText className="h-4 w-4 text-primary shrink-0" />
+                        <span className="text-xs font-bold text-on-surface truncate max-w-[200px]">
+                          {telemetry.resume.fileName || "Uploaded Resume"}
+                        </span>
+                      </div>
+                      {telemetry.resume.atsScore != null && (
+                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-primary-fixed text-on-primary-fixed font-mono">
+                          {telemetry.resume.atsScore}% ATS
+                        </span>
+                      )}
+                    </div>
+                    {telemetry.resume.analyzedAt && (
+                      <div className="text-[10px] font-mono text-outline">
+                        Audit Date: {new Date(telemetry.resume.analyzedAt).toLocaleDateString()}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <form onSubmit={handleResumeSubmit} className="space-y-3">
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] uppercase font-mono font-bold text-on-surface-variant tracking-wider flex items-center justify-between">
+                      <span>{telemetry.resume.available ? "Upload New Version (PDF)" : "Select Resume (PDF)"}</span>
+                      <span className="text-[10px] text-outline font-normal uppercase tracking-normal">Max 5MB</span>
+                    </label>
+                    <div className="relative border-2 border-dashed border-outline-variant/60 rounded-xl p-4 text-center hover:border-primary/50 transition-colors bg-surface-container-lowest cursor-pointer">
+                      <input
+                        type="file"
+                        accept=".pdf"
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            setResumeFile(e.target.files[0]);
+                          }
+                        }}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      />
+                      <div className="flex flex-col items-center gap-1.5">
+                        <FileCode className="h-6 w-6 text-outline" />
+                        <span className="text-xs font-medium text-on-surface">
+                          {resumeFile ? resumeFile.name : "Click or drag PDF resume here"}
+                        </span>
+                        <span className="text-[10px] text-on-surface-variant font-mono">
+                          {resumeFile ? `${(resumeFile.size / 1024).toFixed(0)} KB` : "Supports PDF with extractable text layer"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={resumeLoading || !resumeFile}
+                    className="flex items-center justify-center gap-2 w-full rounded-xl bg-primary-container py-2.5 text-xs font-semibold text-white hover:opacity-95 disabled:opacity-50 transition-all cursor-pointer shadow-xs"
+                  >
+                    {resumeLoading ? (
+                      <>
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        <span>Analyzing Resume Text &amp; Skills...</span>
+                      </>
+                    ) : (
+                      <span>Upload &amp; Audit Resume</span>
+                    )}
+                  </button>
+                </form>
+              </div>
+            )}
+
+            {/* D. PORTFOLIO WEBSITE */}
+            {activeSource === "portfolio" && (
+              <form onSubmit={handlePortfolioSubmit} className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-5 w-5 text-cyan-600" />
+                    <span className="text-xs font-bold text-on-surface">Portfolio Website</span>
+                  </div>
+                  {telemetry.portfolio.analyzed && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200 font-mono">
+                      <CheckCircle className="h-3 w-3" /> AUDITED
+                    </span>
+                  )}
+                </div>
+
+                {telemetry.portfolio.available && (
+                  <div className="rounded-xl border border-outline-variant/40 bg-surface-container-lowest p-4 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <a
+                        href={telemetry.portfolio.url || "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs font-bold text-primary hover:underline flex items-center gap-1 truncate max-w-[200px]"
+                      >
+                        <span>{telemetry.portfolio.url}</span>
+                        <ExternalLink className="h-3 w-3 shrink-0" />
+                      </a>
+                      {telemetry.portfolio.score != null && (
+                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-secondary-fixed text-on-secondary-fixed font-mono">
+                          {telemetry.portfolio.score}/100 Audit
+                        </span>
+                      )}
+                    </div>
+                    {telemetry.portfolio.analyzedAt && (
+                      <div className="text-[10px] font-mono text-outline">
+                        Audit Date: {new Date(telemetry.portfolio.analyzedAt).toLocaleDateString()}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="space-y-1.5">
+                  <label className="text-[11px] uppercase font-mono font-bold text-on-surface-variant tracking-wider">
+                    Portfolio URL
+                  </label>
+                  <input
+                    type="url"
+                    value={portfolioUrl}
+                    onChange={(e) => setPortfolioUrl(e.target.value)}
+                    placeholder="https://myportfolio.dev"
+                    className="w-full rounded-xl border border-outline-variant/50 bg-surface-container-lowest px-3.5 py-2.5 text-xs text-on-surface placeholder:text-outline focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary shadow-xs"
+                    required
+                  />
+                  <p className="text-[10px] text-on-surface-variant">
+                    Crawls metadata, checks design, accessibility, and verifies web performance.
+                  </p>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={portfolioLoading}
+                  className="flex items-center justify-center gap-2 w-full rounded-xl bg-primary-container py-2.5 text-xs font-semibold text-white hover:opacity-95 disabled:opacity-50 transition-all cursor-pointer shadow-xs"
+                >
+                  {portfolioLoading ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      <span>Auditing Portfolio Website...</span>
+                    </>
+                  ) : (
+                    <span>{telemetry.portfolio.analyzed ? "Re-audit Portfolio Website" : "Audit & Sync Portfolio"}</span>
+                  )}
+                </button>
+              </form>
+            )}
+          </div>
+
+          {/* RIGHT PANEL: Interactive Connected Telemetry Audit (5 cols) */}
+          <div className="lg:col-span-5 space-y-4 bg-surface-container-low p-5 rounded-xl border border-outline-variant/30 flex flex-col justify-between">
             <div>
-              <span className="text-[11px] font-mono font-bold text-on-surface-variant uppercase tracking-wider block mb-3">
-                Connected Telemetry Audit
-              </span>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[11px] font-mono font-bold text-on-surface-variant uppercase tracking-wider block">
+                  Connected Telemetry Audit
+                </span>
+                <span className="text-[10px] text-outline font-mono">Click row to manage</span>
+              </div>
 
-              <div className="space-y-3">
-                <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2 text-on-surface font-medium">
-                    <GithubIcon className="h-4 w-4 text-on-surface-variant" />
+              <div className="space-y-2.5" role="tablist" aria-label="Telemetry Channels">
+                {/* 1. GitHub Row */}
+                <div
+                  role="tab"
+                  tabIndex={0}
+                  aria-selected={activeSource === "github"}
+                  onClick={() => setActiveSource("github")}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setActiveSource("github");
+                    }
+                  }}
+                  className={cn(
+                    "w-full flex items-center justify-between text-xs p-3 rounded-xl border transition-all cursor-pointer select-none",
+                    activeSource === "github"
+                      ? "bg-surface-container-lowest border-primary/50 shadow-xs ring-1 ring-primary/25"
+                      : "bg-surface-container-lowest/50 border-outline-variant/30 hover:bg-surface-container-lowest hover:border-outline-variant/60"
+                  )}
+                >
+                  <div className="flex items-center gap-2.5 text-on-surface font-semibold">
+                    <div
+                      className={cn(
+                        "flex h-7 w-7 items-center justify-center rounded-lg transition-colors",
+                        activeSource === "github"
+                          ? "bg-primary/10 text-primary"
+                          : "bg-surface-container text-on-surface-variant"
+                      )}
+                    >
+                      <GithubIcon className="h-3.5 w-3.5" />
+                    </div>
                     <span>GitHub Integration</span>
                   </div>
-                  {connectedAccounts?.github ? (
-                    <span className="text-[11px] font-bold text-emerald-600 flex items-center gap-1">
-                      <CheckCircle className="h-3.5 w-3.5" /> ACTIVE ({connectedAccounts.github})
-                    </span>
-                  ) : (
-                    <span className="text-[11px] text-outline font-mono">NOT CONNECTED</span>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {telemetry.github.connected ? (
+                      <span className="text-[11px] font-bold text-emerald-600 flex items-center gap-1 font-mono">
+                        <CheckCircle className="h-3.5 w-3.5 shrink-0" /> CONNECTED {telemetry.github.username ? `(${telemetry.github.username})` : ""}
+                      </span>
+                    ) : (
+                      <span className="text-[11px] text-outline font-mono">NOT CONNECTED</span>
+                    )}
+                    <ChevronRight
+                      className={cn(
+                        "h-3.5 w-3.5 transition-transform",
+                        activeSource === "github" ? "text-primary translate-x-0.5" : "text-outline/40"
+                      )}
+                    />
+                  </div>
                 </div>
 
-                <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2 text-on-surface font-medium">
-                    <LinkedinIcon className="h-4 w-4 text-on-surface-variant" />
+                {/* 2. LinkedIn Row */}
+                <div
+                  role="tab"
+                  tabIndex={0}
+                  aria-selected={activeSource === "linkedin"}
+                  onClick={() => setActiveSource("linkedin")}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setActiveSource("linkedin");
+                    }
+                  }}
+                  className={cn(
+                    "w-full flex items-center justify-between text-xs p-3 rounded-xl border transition-all cursor-pointer select-none",
+                    activeSource === "linkedin"
+                      ? "bg-surface-container-lowest border-primary/50 shadow-xs ring-1 ring-primary/25"
+                      : "bg-surface-container-lowest/50 border-outline-variant/30 hover:bg-surface-container-lowest hover:border-outline-variant/60"
+                  )}
+                >
+                  <div className="flex items-center gap-2.5 text-on-surface font-semibold">
+                    <div
+                      className={cn(
+                        "flex h-7 w-7 items-center justify-center rounded-lg transition-colors",
+                        activeSource === "linkedin"
+                          ? "bg-primary/10 text-primary"
+                          : "bg-surface-container text-on-surface-variant"
+                      )}
+                    >
+                      <LinkedinIcon className="h-3.5 w-3.5" />
+                    </div>
                     <span>LinkedIn Sync</span>
                   </div>
-                  {report?.linkedin || connectedAccounts?.linkedin ? (
-                    <span className="text-[11px] font-bold text-emerald-600 flex items-center gap-1">
-                      <CheckCircle className="h-3.5 w-3.5" /> ACTIVE
-                    </span>
-                  ) : (
-                    <span className="text-[11px] text-outline font-mono">NOT SYNCED</span>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {telemetry.linkedin.synced ? (
+                      <span className="text-[11px] font-bold text-emerald-600 flex items-center gap-1 font-mono">
+                        <CheckCircle className="h-3.5 w-3.5 shrink-0" /> SYNCED
+                      </span>
+                    ) : (
+                      <span className="text-[11px] text-outline font-mono">NOT SYNCED</span>
+                    )}
+                    <ChevronRight
+                      className={cn(
+                        "h-3.5 w-3.5 transition-transform",
+                        activeSource === "linkedin" ? "text-primary translate-x-0.5" : "text-outline/40"
+                      )}
+                    />
+                  </div>
                 </div>
 
-                <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2 text-on-surface font-medium">
-                    <FileCode className="h-4 w-4 text-on-surface-variant" />
+                {/* 3. Resume Row */}
+                <div
+                  role="tab"
+                  tabIndex={0}
+                  aria-selected={activeSource === "resume"}
+                  onClick={() => setActiveSource("resume")}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setActiveSource("resume");
+                    }
+                  }}
+                  className={cn(
+                    "w-full flex items-center justify-between text-xs p-3 rounded-xl border transition-all cursor-pointer select-none",
+                    activeSource === "resume"
+                      ? "bg-surface-container-lowest border-primary/50 shadow-xs ring-1 ring-primary/25"
+                      : "bg-surface-container-lowest/50 border-outline-variant/30 hover:bg-surface-container-lowest hover:border-outline-variant/60"
+                  )}
+                >
+                  <div className="flex items-center gap-2.5 text-on-surface font-semibold">
+                    <div
+                      className={cn(
+                        "flex h-7 w-7 items-center justify-center rounded-lg transition-colors",
+                        activeSource === "resume"
+                          ? "bg-primary/10 text-primary"
+                          : "bg-surface-container text-on-surface-variant"
+                      )}
+                    >
+                      <FileCode className="h-3.5 w-3.5" />
+                    </div>
                     <span>Resume Analysis</span>
                   </div>
-                  {report?.resume ? (
-                    <span className="text-[11px] font-bold text-emerald-600 flex items-center gap-1">
-                      <CheckCircle className="h-3.5 w-3.5" /> ACTIVE
-                    </span>
-                  ) : (
-                    <span className="text-[11px] text-outline font-mono">NO RESUME</span>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {telemetry.resume.analyzed ? (
+                      <span className="text-[11px] font-bold text-emerald-600 flex items-center gap-1 font-mono">
+                        <CheckCircle className="h-3.5 w-3.5 shrink-0" /> ANALYZED {telemetry.resume.atsScore != null ? `(${telemetry.resume.atsScore}% ATS)` : ""}
+                      </span>
+                    ) : telemetry.resume.available ? (
+                      <span className="text-[11px] font-bold text-amber-600 font-mono">READY</span>
+                    ) : (
+                      <span className="text-[11px] text-outline font-mono">NO RESUME</span>
+                    )}
+                    <ChevronRight
+                      className={cn(
+                        "h-3.5 w-3.5 transition-transform",
+                        activeSource === "resume" ? "text-primary translate-x-0.5" : "text-outline/40"
+                      )}
+                    />
+                  </div>
                 </div>
 
-                <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2 text-on-surface font-medium">
-                    <Globe className="h-4 w-4 text-on-surface-variant" />
+                {/* 4. Portfolio Row */}
+                <div
+                  role="tab"
+                  tabIndex={0}
+                  aria-selected={activeSource === "portfolio"}
+                  onClick={() => setActiveSource("portfolio")}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setActiveSource("portfolio");
+                    }
+                  }}
+                  className={cn(
+                    "w-full flex items-center justify-between text-xs p-3 rounded-xl border transition-all cursor-pointer select-none",
+                    activeSource === "portfolio"
+                      ? "bg-surface-container-lowest border-primary/50 shadow-xs ring-1 ring-primary/25"
+                      : "bg-surface-container-lowest/50 border-outline-variant/30 hover:bg-surface-container-lowest hover:border-outline-variant/60"
+                  )}
+                >
+                  <div className="flex items-center gap-2.5 text-on-surface font-semibold">
+                    <div
+                      className={cn(
+                        "flex h-7 w-7 items-center justify-center rounded-lg transition-colors",
+                        activeSource === "portfolio"
+                          ? "bg-primary/10 text-primary"
+                          : "bg-surface-container text-on-surface-variant"
+                      )}
+                    >
+                      <Globe className="h-3.5 w-3.5" />
+                    </div>
                     <span>Portfolio Website</span>
                   </div>
-                  {report?.portfolio ? (
-                    <span className="text-[11px] font-bold text-emerald-600 flex items-center gap-1">
-                      <CheckCircle className="h-3.5 w-3.5" /> ACTIVE
-                    </span>
-                  ) : (
-                    <span className="text-[11px] text-outline font-mono">NO PORTFOLIO</span>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {telemetry.portfolio.analyzed ? (
+                      <span className="text-[11px] font-bold text-emerald-600 flex items-center gap-1 font-mono">
+                        <CheckCircle className="h-3.5 w-3.5 shrink-0" /> ANALYZED {telemetry.portfolio.score != null ? `(${telemetry.portfolio.score}/100)` : ""}
+                      </span>
+                    ) : telemetry.portfolio.available ? (
+                      <span className="text-[11px] font-bold text-amber-600 font-mono">CONNECTED</span>
+                    ) : (
+                      <span className="text-[11px] text-outline font-mono">NO PORTFOLIO</span>
+                    )}
+                    <ChevronRight
+                      className={cn(
+                        "h-3.5 w-3.5 transition-transform",
+                        activeSource === "portfolio" ? "text-primary translate-x-0.5" : "text-outline/40"
+                      )}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -1212,7 +1896,7 @@ export function IntelligenceClient({
               <Link href="/dashboard/settings" className="text-primary font-semibold hover:underline">
                 Settings Tab
               </Link>
-              . DevLeveler aggregates signals automatically.
+              . DevLeveler aggregates signals automatically into your Developer Intelligence Dossier.
             </div>
           </div>
         </div>

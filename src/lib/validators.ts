@@ -48,7 +48,8 @@ export function validateResumeUpload(formData: FormData): {
     return { success: false, error: "No file provided" };
   }
 
-  if (file.type !== "application/pdf") {
+  const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+  if (!isPdf) {
     return { success: false, error: "Only PDF files are accepted" };
   }
 

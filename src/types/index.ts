@@ -328,3 +328,45 @@ export const LANGUAGE_COLORS: Record<string, string> = {
 };
 
 export const DEFAULT_LANGUAGE_COLOR = "#8b8b8b";
+
+// --- Telemetry Channels ---
+export type TelemetrySource = "github" | "linkedin" | "resume" | "portfolio";
+
+export interface GitHubTelemetry {
+  connected: boolean;
+  username: string | null;
+  avatarUrl: string | null;
+  score: number | null;
+  publicRepos: number;
+  analyzedAt: string | null;
+}
+
+export interface LinkedInTelemetry {
+  synced: boolean;
+  url: string | null;
+  headline: string | null;
+  analyzedAt: string | null;
+}
+
+export interface ResumeTelemetry {
+  available: boolean;
+  analyzed: boolean;
+  fileName: string | null;
+  atsScore: number | null;
+  analyzedAt: string | null;
+}
+
+export interface PortfolioTelemetry {
+  available: boolean;
+  analyzed: boolean;
+  url: string | null;
+  score: number | null;
+  analyzedAt: string | null;
+}
+
+export interface TelemetryStatus {
+  github: GitHubTelemetry;
+  linkedin: LinkedInTelemetry;
+  resume: ResumeTelemetry;
+  portfolio: PortfolioTelemetry;
+}

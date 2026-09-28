@@ -8,6 +8,8 @@ import { calculateLevel } from "@/lib/xp";
 import { calculateScore } from "@/actions/score";
 import { enforceRateLimit, RATE_LIMITS, rateLimitKey } from "@/lib/rate-limit";
 
+import { revalidatePath } from "next/cache";
+
 export interface FormattedReport {
   id: string;
   userId: string;
@@ -20,6 +22,7 @@ export interface FormattedReport {
   milestones: unknown[];
   skillGapMatrix: unknown;
   cachedAt: string;
+  isStale?: boolean;
   linkedin?: string;
   resume?: string;
   portfolio?: string;
@@ -327,6 +330,11 @@ export async function generateUnifiedReportAction(): Promise<ApiResponse<Formatt
       }
     }
 
+    try {
+      revalidatePath("/dashboard/intelligence");
+      revalidatePath("/dashboard");
+    } catch {}
+
     return {
       success: true,
       data: {
@@ -353,21 +361,28 @@ export async function getUnifiedReportAction(): Promise<ApiResponse<FormattedRep
     }
     const userId = session.user.id;
 
-    // Fetch report, linkedin, resume, and portfolio in parallel
-    const [report, linkedin, resume, portfolio] = await Promise.all([
+    // Fetch report, github, linkedin, resume, and portfolio in parallel
+    const [report, github, linkedin, resume, portfolio] = await Promise.all([
       prisma.developerIntelligenceReport.findUnique({
         where: { userId }
       }),
+      prisma.gitHubProfile.findUnique({
+        where: { userId },
+        select: { analyzedAt: true, updatedAt: true }
+      }),
       prisma.linkedInAnalysis.findUnique({
-        where: { userId }
+        where: { userId },
+        select: { url: true, analyzedAt: true }
       }),
       prisma.resume.findFirst({
         where: { userId },
-        orderBy: { analyzedAt: "desc" }
+        orderBy: { analyzedAt: "desc" },
+        select: { fileName: true, analyzedAt: true }
       }),
       prisma.portfolioAnalysis.findFirst({
         where: { userId },
-        orderBy: { analyzedAt: "desc" }
+        orderBy: { analyzedAt: "desc" },
+        select: { url: true, analyzedAt: true }
       })
     ]);
 
@@ -391,6 +406,7 @@ export async function getUnifiedReportAction(): Promise<ApiResponse<FormattedRep
           milestones: [],
           skillGapMatrix: {},
           cachedAt: new Date().toISOString(),
+          isStale: false,
           linkedin: linkedin ? linkedin.url : undefined,
           resume: resume ? resume.fileName : undefined,
           portfolio: portfolio ? portfolio.url : undefined
@@ -398,10 +414,27 @@ export async function getUnifiedReportAction(): Promise<ApiResponse<FormattedRep
       };
     }
 
+    // Check if report is stale compared to latest telemetry updates
+    const reportTime = new Date(report.cachedAt).getTime();
+    const githubTime = Math.max(
+      github?.analyzedAt ? new Date(github.analyzedAt).getTime() : 0,
+      github?.updatedAt ? new Date(github.updatedAt).getTime() : 0
+    );
+    const linkedinTime = linkedin?.analyzedAt ? new Date(linkedin.analyzedAt).getTime() : 0;
+    const resumeTime = resume?.analyzedAt ? new Date(resume.analyzedAt).getTime() : 0;
+    const portfolioTime = portfolio?.analyzedAt ? new Date(portfolio.analyzedAt).getTime() : 0;
+
+    const isStale =
+      githubTime > reportTime ||
+      linkedinTime > reportTime ||
+      resumeTime > reportTime ||
+      portfolioTime > reportTime;
+
     return {
       success: true,
       data: {
         ...formatReport(report),
+        isStale,
         linkedin: linkedin ? linkedin.url : undefined,
         resume: resume ? resume.fileName : undefined,
         portfolio: portfolio ? portfolio.url : undefined
@@ -410,5 +443,26 @@ export async function getUnifiedReportAction(): Promise<ApiResponse<FormattedRep
   } catch (error) {
     console.error("Error in getUnifiedReportAction:", error);
     return { success: false, error: "Failed to load report" };
+  }
+}
+
+export async function invalidateIntelligenceReportAction(): Promise<ApiResponse<{ invalidated: boolean }>> {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return { success: false, error: "Unauthorized" };
+    }
+    await prisma.developerIntelligenceReport.deleteMany({
+      where: { userId: session.user.id }
+    });
+    try {
+      revalidatePath("/dashboard/intelligence");
+    } catch {}
+    return { success: true, data: { invalidated: true } };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to invalidate report"
+    };
   }
 }

@@ -398,6 +398,22 @@ src/lib/ai/
 
 ---
 
+## 📅 28 September 2026
+
+### Developer Intelligence — Connected Telemetry Channels & Live Audit Fix
+- **Live Database Telemetry**: Implemented `getTelemetryStatus(userId)` in `src/actions/telemetry.ts` and wired directly to authenticated session in `/dashboard/intelligence/page.tsx`. Replaced fake/client-only state with persisted records from `GitHubProfile`, `LinkedInAnalysis`, `Resume`, and `PortfolioAnalysis`.
+- **Interactive Audit Rows**: Added `TelemetrySource` state (`github` | `linkedin` | `resume` | `portfolio`) to `src/components/dashboard/intelligence-client.tsx`. All 4 audit rows are now interactive buttons with keyboard accessibility (`role="tab"`, `aria-selected`, `Enter`/`Space` handlers) and active design tokens.
+- **Dynamic Left Panel**: Implemented dedicated sub-views for GitHub, LinkedIn, Resume, and Portfolio inside the same Connected Telemetry card. Reused existing backend actions (`analyzeGitHub`, `analyzeLinkedInAction`, `analyzeResumeAction`, `analyzePortfolioAction`).
+- **Live Immediate Refresh**: Mutations update local telemetry state instantly, trigger unified report regeneration, and invoke `router.refresh()` + `revalidatePath("/dashboard/intelligence")` without requiring a browser reload.
+- **Stale Intelligence Detection & Invalidation**: Added staleness detection comparing `developerIntelligenceReport.cachedAt` against latest telemetry timestamps (`gitHubProfile`, `linkedInAnalysis`, `resume`, `portfolioAnalysis`). Added stale notification banner and `invalidateIntelligenceReportAction`.
+
+**Build Status:**
+- `npx tsc --noEmit`: ✅ PASS (0 errors)
+- `npm run lint`: ✅ PASS (0 errors)
+- `npm run build`: ✅ PASS (All 25 pages compiled cleanly)
+
+---
+
 ## 📅 Next Planned Work
 
 ### Batch 7 — Email Service Preparation
@@ -407,4 +423,4 @@ src/lib/ai/
 
 ---
 
-*Last updated: 20 September 2026*
+*Last updated: 28 September 2026*
