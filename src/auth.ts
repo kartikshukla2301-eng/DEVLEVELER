@@ -9,8 +9,10 @@ import { analyzeGitHubProfile } from "@/lib/github";
 import { XP_REWARDS, calculateLevel } from "@/lib/xp";
 import { unlockAchievement } from "@/lib/achievements";
 import { calculateScore } from "@/actions/score";
+import { authConfig } from "@/auth.config";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  ...authConfig,
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   providers: [
@@ -57,6 +59,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signIn: "/login",
   },
   callbacks: {
+    ...authConfig.callbacks,
     async signIn({ user, account, profile }) {
       if (account?.provider === "github" && profile) {
         const githubUsername = (profile.login || profile.username) as string;
