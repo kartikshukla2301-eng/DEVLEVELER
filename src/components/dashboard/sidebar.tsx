@@ -13,7 +13,7 @@ import {
   FolderCode,
   MessageSquare,
   Zap,
-  Award,
+  // Award, // Temporarily disabled with Rankings & Leaderboard
   CreditCard,
   Users,
   Shield,
@@ -93,7 +93,8 @@ export function Sidebar({ user }: SidebarProps) {
     { label: "Portfolio Audit", icon: ClipboardCheck, href: "/dashboard/portfolio" },
     { label: "AI Career Coach", icon: Compass, href: "/dashboard/career-coach" },
     { label: "Interview Prep", icon: MessageSquare, href: "/dashboard/interview" },
-    { label: "Rankings & Leaderboard", icon: Award, href: "/dashboard/rankings" },
+    // Temporarily disabled:
+    // { label: "Rankings & Leaderboard", icon: Award, href: "/dashboard/rankings" },
     { label: "Billing & Founding Dev", icon: CreditCard, href: "/dashboard/billing" },
   ];
 
