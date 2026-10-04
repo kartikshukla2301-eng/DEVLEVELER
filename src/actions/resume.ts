@@ -64,8 +64,13 @@ export async function analyzeResumeAction(
       return { success: false, error: "Could not extract text from the PDF" };
     }
 
-    // 5. Analyze text with Gemini
-    const analysis = await analyzeResume(text);
+    // 5. Analyze text with Gemini (with userId context & observability)
+    const analysis = await analyzeResume(text, userId);
+
+    // Invalidate stale intelligence & readiness caches when a new resume is uploaded
+    const { invalidateUserAICache } = await import("@/lib/ai");
+    await invalidateUserAICache(userId, "readiness").catch(() => {});
+    await invalidateUserAICache(userId, "intelligence").catch(() => {});
 
     // 6. Save to database
     await prisma.resume.create({

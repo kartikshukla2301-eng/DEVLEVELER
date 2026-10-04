@@ -44,42 +44,42 @@ function LinkedinIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function Footer() {
   return (
-    <footer className="relative border-t border-[var(--border)] py-12 bg-[var(--background)] overflow-hidden">
-      {/* Subtle aurora glow */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[200px] bg-gradient-to-t from-blue-500/5 via-purple-500/3 to-transparent rounded-full blur-[80px] pointer-events-none" />
+    <footer className="relative border-t border-slate-800/80 py-16 bg-[#0a0f1d] overflow-hidden text-slate-300">
+      {/* Subtle technical aurora glow */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[220px] bg-gradient-to-t from-blue-600/10 via-indigo-600/5 to-transparent rounded-full blur-[90px] pointer-events-none" />
 
       <div className="mx-auto max-w-6xl px-6 relative z-10">
-        <div className="grid gap-8 md:grid-cols-4">
+        <div className="grid gap-10 md:grid-cols-4">
           
           {/* Logo & Tagline */}
           <div className="space-y-4">
             <Link
               href="/"
               id="footer-logo"
-              className="flex items-center gap-2 text-[var(--foreground)]"
+              className="flex items-center gap-2.5 text-white"
             >
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--accent)] to-[var(--accent-secondary)] text-white">
-                <Code2 className="h-4 w-4" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20">
+                <Code2 className="h-4.5 w-4.5" />
               </div>
-              <span className="text-base font-semibold tracking-tight bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
+              <span className="text-base font-bold tracking-tight text-white">
                 DevLeveler
               </span>
             </Link>
-            <p className="text-xs leading-relaxed text-[var(--foreground-tertiary)] max-w-xs">
-              AI-powered developer intelligence platform. Know your level, find gaps, and map your growth.
+            <p className="text-xs leading-relaxed text-slate-400 max-w-xs font-normal">
+              AI-powered developer intelligence platform. Know your level, find gaps, and map your career trajectory with telemetry.
             </p>
           </div>
 
           {/* Product Links */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-[var(--foreground)]">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200">
               Product
             </h4>
             <ul className="mt-4 space-y-2.5">
               <li>
                 <a
                   href="#about"
-                  className="text-xs text-[var(--foreground-secondary)] hover:text-[var(--foreground)] transition-colors"
+                  className="text-xs text-slate-400 hover:text-white transition-colors"
                 >
                   About Platform
                 </a>
@@ -87,7 +87,7 @@ export function Footer() {
               <li>
                 <a
                   href="#features"
-                  className="text-xs text-[var(--foreground-secondary)] hover:text-[var(--foreground)] transition-colors"
+                  className="text-xs text-slate-400 hover:text-white transition-colors"
                 >
                   Features
                 </a>
@@ -95,7 +95,7 @@ export function Footer() {
               <li>
                 <a
                   href="#pricing"
-                  className="text-xs text-[var(--foreground-secondary)] hover:text-[var(--foreground)] transition-colors"
+                  className="text-xs text-slate-400 hover:text-white transition-colors"
                 >
                   Pricing
                 </a>
@@ -105,7 +105,7 @@ export function Footer() {
 
           {/* Resources */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-[var(--foreground)]">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200">
               Resources
             </h4>
             <ul className="mt-4 space-y-2.5">
@@ -114,7 +114,7 @@ export function Footer() {
                   href="https://github.com/kartikshukla2301-eng"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-[var(--foreground-secondary)] hover:text-[var(--foreground)] transition-colors"
+                  className="text-xs text-slate-400 hover:text-white transition-colors"
                 >
                   GitHub Profile
                 </a>
@@ -124,7 +124,7 @@ export function Footer() {
                   href="https://kartik-portfolio-chi-eight.vercel.app"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-[var(--foreground-secondary)] hover:text-[var(--foreground)] transition-colors"
+                  className="text-xs text-slate-400 hover:text-white transition-colors"
                 >
                   Developer Portfolio
                 </a>
@@ -134,7 +134,7 @@ export function Footer() {
                   href="https://www.linkedin.com/in/kartik-shukla-cse"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-[var(--foreground-secondary)] hover:text-[var(--foreground)] transition-colors"
+                  className="text-xs text-slate-400 hover:text-white transition-colors"
                 >
                   LinkedIn Directory
                 </a>
@@ -144,14 +144,14 @@ export function Footer() {
 
           {/* Company */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-[var(--foreground)]">
-              Company
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200">
+              Security & Contact
             </h4>
             <ul className="mt-4 space-y-2.5">
               <li>
                 <a
                   href="#trust"
-                  className="text-xs text-[var(--foreground-secondary)] hover:text-[var(--foreground)] transition-colors"
+                  className="text-xs text-slate-400 hover:text-white transition-colors"
                 >
                   Trust & Security
                 </a>
@@ -159,15 +159,15 @@ export function Footer() {
               <li>
                 <a
                   href="#contact"
-                  className="text-xs text-[var(--foreground-secondary)] hover:text-[var(--foreground)] transition-colors"
+                  className="text-xs text-slate-400 hover:text-white transition-colors"
                 >
-                  Contact Info
+                  Direct Inquiry
                 </a>
               </li>
               <li>
                 <a
                   href="mailto:kartikshukla2301@gmail.com"
-                  className="text-xs text-[var(--foreground-secondary)] hover:text-[var(--foreground)] transition-colors"
+                  className="text-xs text-slate-400 hover:text-white transition-colors"
                 >
                   Email Developer
                 </a>
@@ -177,16 +177,16 @@ export function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-[var(--border)] pt-8 sm:flex-row">
-          <p className="text-xs text-[var(--foreground-tertiary)]">
-            &copy; {new Date().getFullYear()} DevLeveler. Built with precision.
+        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-slate-800/80 pt-8 sm:flex-row">
+          <p className="text-xs text-slate-500">
+            &copy; {new Date().getFullYear()} DevLeveler. Built with precision for developers.
           </p>
           <div className="flex gap-4">
             <a
               href="https://github.com/kartikshukla2301-eng"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[var(--foreground-tertiary)] hover:text-[var(--foreground)] transition-colors"
+              className="text-slate-400 hover:text-white transition-colors"
               aria-label="GitHub"
             >
               <GithubIcon className="h-4.5 w-4.5" />
@@ -195,7 +195,7 @@ export function Footer() {
               href="https://www.linkedin.com/in/kartik-shukla-cse"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[var(--foreground-tertiary)] hover:text-[var(--foreground)] transition-colors"
+              className="text-slate-400 hover:text-white transition-colors"
               aria-label="LinkedIn"
             >
               <LinkedinIcon className="h-4.5 w-4.5" />
@@ -204,14 +204,14 @@ export function Footer() {
               href="https://kartik-portfolio-chi-eight.vercel.app"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[var(--foreground-tertiary)] hover:text-[var(--foreground)] transition-colors"
+              className="text-slate-400 hover:text-white transition-colors"
               aria-label="Portfolio"
             >
               <Globe className="h-4.5 w-4.5" />
             </a>
             <a
               href="mailto:kartikshukla2301@gmail.com"
-              className="text-[var(--foreground-tertiary)] hover:text-[var(--foreground)] transition-colors"
+              className="text-slate-400 hover:text-white transition-colors"
               aria-label="Email"
             >
               <Mail className="h-4.5 w-4.5" />

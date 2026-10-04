@@ -39,7 +39,7 @@ export function Navbar() {
         className={cn(
           "w-full transition-all duration-500 border border-transparent",
           scrolled
-            ? "rounded-full bg-zinc-950/65 backdrop-blur-xl border-white/10 px-6 py-2.5 shadow-2xl shadow-blue-500/5 glow-border-cyan"
+            ? "rounded-full bg-white/95 backdrop-blur-xl border-slate-200/90 px-6 py-2.5 shadow-md shadow-slate-200/40"
             : "bg-transparent px-6 py-5 border-b border-transparent"
         )}
       >
@@ -48,18 +48,18 @@ export function Navbar() {
           <Link
             href="/"
             id="navbar-logo"
-            className="flex items-center gap-2 text-[var(--foreground)] hover:opacity-90 transition-opacity group"
+            className="flex items-center gap-2 text-[#0f172a] hover:opacity-90 transition-opacity group"
           >
-            <div className="flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--accent)] to-[var(--accent-secondary)] text-white shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform duration-300">
+            <div className="flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform duration-300">
               <Code2 className="h-4.5 w-4.5 group-hover:rotate-12 transition-transform duration-300" />
             </div>
-            <span className="text-base font-extrabold tracking-tight bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
+            <span className="text-base font-extrabold tracking-tight text-[#0f172a]">
               DevLeveler
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden items-center gap-1 md:flex bg-zinc-900/30 border border-white/5 rounded-full p-1">
+          <div className="hidden items-center gap-1 md:flex bg-slate-100/90 border border-slate-200 rounded-full p-1 shadow-inner">
             {navLinks.map((link) => (
               <a
                 key={link.href}
@@ -67,12 +67,12 @@ export function Navbar() {
                 id={`nav-link-${link.label.toLowerCase().replace(/\s+/g, "-")}`}
                 onMouseEnter={() => setHoveredLink(link.label)}
                 onMouseLeave={() => setHoveredLink(null)}
-                className="relative px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide text-zinc-400 transition-colors duration-200 hover:text-white"
+                className="relative px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide text-[#334155] transition-colors duration-200 hover:text-[#0f172a]"
               >
                 {hoveredLink === link.label && (
                   <motion.span
                     layoutId="nav-hover-bg"
-                    className="absolute inset-0 bg-white/5 rounded-full"
+                    className="absolute inset-0 bg-white rounded-full shadow-xs border border-slate-200/70"
                     transition={{ type: "spring", stiffness: 350, damping: 25 }}
                   />
                 )}
@@ -86,7 +86,7 @@ export function Navbar() {
             <Link
               href="/login"
               id="navbar-cta"
-              className="relative inline-flex h-8.5 items-center justify-center rounded-full bg-white px-5 text-xs font-bold text-black transition-all hover:scale-[1.03] hover:shadow-lg hover:shadow-white/10 active:scale-[0.97]"
+              className="relative inline-flex h-8.5 items-center justify-center rounded-full bg-blue-600 px-5 text-xs font-bold text-white transition-all hover:bg-blue-700 hover:scale-[1.02] shadow-sm shadow-blue-500/25 active:scale-[0.98]"
             >
               <span>Get Started</span>
             </Link>
@@ -96,7 +96,7 @@ export function Navbar() {
           <button
             id="mobile-menu-toggle"
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="flex h-8.5 w-8.5 items-center justify-center rounded-full border border-white/10 bg-zinc-950/20 text-zinc-400 hover:text-white md:hidden"
+            className="flex h-8.5 w-8.5 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-[var(--foreground-secondary)] hover:text-[var(--foreground)] md:hidden"
             aria-label="Toggle menu"
           >
             {mobileOpen ? <X className="h-4.5 w-4.5" /> : <Menu className="h-4.5 w-4.5" />}
@@ -111,7 +111,7 @@ export function Navbar() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="mx-3 mt-2 rounded-2xl border border-white/10 bg-zinc-950/90 backdrop-blur-2xl px-6 py-5 md:hidden shadow-2xl"
+            className="mx-3 mt-2 rounded-2xl border border-[var(--border)] bg-[var(--surface)]/95 backdrop-blur-2xl px-6 py-5 md:hidden shadow-2xl"
           >
             <div className="flex flex-col gap-4">
               {navLinks.map((link) => (
@@ -119,16 +119,16 @@ export function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className="text-xs font-semibold text-zinc-400 transition-colors hover:text-white"
+                  className="text-xs font-semibold text-[var(--foreground-secondary)] transition-colors hover:text-[var(--foreground)]"
                 >
                   {link.label}
                 </a>
               ))}
-              <div className="border-t border-white/5 pt-4">
+              <div className="border-t border-[var(--border)] pt-4">
                 <Link
                   href="/login"
                   onClick={() => setMobileOpen(false)}
-                  className="inline-flex h-9 w-full items-center justify-center rounded-full bg-white text-xs font-bold text-black hover:bg-zinc-200 transition-all text-center"
+                  className="inline-flex h-9 w-full items-center justify-center rounded-full bg-[var(--primary)] text-xs font-bold text-white hover:bg-[var(--accent-hover)] transition-all text-center"
                 >
                   Get Started
                 </Link>

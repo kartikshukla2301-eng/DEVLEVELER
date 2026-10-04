@@ -6,7 +6,14 @@
 // All new code should import from @/lib/ai instead.
 // ============================================================
 
-import { ai, extractJSON, clampScore } from "@/lib/ai";
+import {
+  ai,
+  extractJSON,
+  clampScore,
+  executeWithObservabilityAndCache,
+  CACHE_TTL,
+} from "@/lib/ai";
+import { roadmapDataSchema } from "@/lib/validators";
 import type {
   ResumeAnalysis,
   SkillGapAnalysis,
@@ -20,14 +27,19 @@ import type {
 
 export { extractJSON } from "@/lib/ai";
 
+import type { GenerateContentOptions } from "@/lib/ai";
+
 /**
  * Get the AI model. Delegates to the provider abstraction.
  * @deprecated Use `ai()` from @/lib/ai instead
  */
 export function getModel() {
   return {
-    generateContent: async (prompt: string) => {
-      const text = await ai().generateContent(prompt);
+    generateContent: async (
+      prompt: string,
+      options?: GenerateContentOptions
+    ) => {
+      const text = await ai().generateContent(prompt, options);
       return { response: { text: () => text } };
     },
     startChat: (options: {
@@ -53,7 +65,10 @@ export function getModel() {
 // Resume Analysis
 // ---------------------------------------------------------------------------
 
-export async function analyzeResume(text: string): Promise<ResumeAnalysis> {
+export async function analyzeResume(
+  text: string,
+  userId?: string | null
+): Promise<ResumeAnalysis> {
   const prompt = `Analyze this resume. Act as a hiring manager — be honest, not motivational. Flag weak projects and missing fundamentals.
 
 Return JSON:
@@ -74,10 +89,8 @@ ATS score: keyword density + metrics. Quality score: concrete achievements vs va
 RESUME:
 ${text}`;
 
-  try {
-    const response = await ai().generateContent(prompt);
-    const analysis = extractJSON<ResumeAnalysis>(response);
-
+  const parseResult = (raw: string): ResumeAnalysis => {
+    const analysis = extractJSON<ResumeAnalysis>(raw);
     return {
       skills: Array.isArray(analysis.skills) ? analysis.skills : [],
       education: Array.isArray(analysis.education) ? analysis.education : [],
@@ -96,14 +109,21 @@ ${text}`;
         : [],
       summary: analysis.summary || "No summary available.",
     };
-  } catch (error) {
-    if (error instanceof Error && error.message.includes("parse")) {
-      throw error;
-    }
-    throw new Error(
-      `Resume analysis failed: ${error instanceof Error ? error.message : "Unknown error"}`
-    );
-  }
+  };
+
+  return executeWithObservabilityAndCache<ResumeAnalysis>({
+    feature: "resume",
+    action: "analyze",
+    userId,
+    context: {
+      textLength: text.length,
+      sample: text.slice(0, 300),
+    },
+    prompt,
+    options: { json: true },
+    ttlSeconds: CACHE_TTL.RESUME,
+    parseResult,
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -116,7 +136,8 @@ export async function generateSkillGapAnalysis(
   careerGoals?: string[],
   experience?: string[],
   education?: string[],
-  portfolioTelemetry?: string[]
+  portfolioTelemetry?: string[],
+  userId?: string | null
 ): Promise<SkillGapAnalysis> {
   const prompt = `Evaluate this developer's skill gaps against industry standards. Be honest, not motivational.
 
@@ -136,10 +157,8 @@ Return JSON:
 }
 Return ONLY the JSON.`;
 
-  try {
-    const response = await ai().generateContent(prompt);
-    const analysis = extractJSON<SkillGapAnalysis>(response);
-
+  const parseResult = (raw: string): SkillGapAnalysis => {
+    const analysis = extractJSON<SkillGapAnalysis>(raw);
     return {
       currentSkills: Array.isArray(analysis.currentSkills)
         ? analysis.currentSkills
@@ -154,14 +173,22 @@ Return ONLY the JSON.`;
         ? analysis.skillDistribution
         : [],
     };
-  } catch (error) {
-    if (error instanceof Error && error.message.includes("parse")) {
-      throw error;
-    }
-    throw new Error(
-      `Skill gap analysis failed: ${error instanceof Error ? error.message : "Unknown error"}`
-    );
-  }
+  };
+
+  return executeWithObservabilityAndCache<SkillGapAnalysis>({
+    feature: "skill_gap",
+    action: "analyze",
+    userId,
+    context: {
+      skills: [...skills].sort(),
+      githubLanguages: [...githubLanguages].sort(),
+      careerGoals,
+    },
+    prompt,
+    options: { json: true },
+    ttlSeconds: CACHE_TTL.SKILL_GAP,
+    parseResult,
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -171,52 +198,74 @@ Return ONLY the JSON.`;
 export async function generateRoadmap(
   skills: string[],
   gaps: string[],
-  role: string
+  role: string,
+  userId?: string | null,
+  bypassCache = false
 ): Promise<RoadmapData> {
-  const prompt = `Generate a 12-week roadmap for: ${role}.
-Skills: ${JSON.stringify(skills)}
-Gaps: ${JSON.stringify(gaps)}
-No trivial projects. Recommend complex, evidence-based concepts.
+  const sanitizedRole = role.trim();
+  const currentSkills = skills.length > 0 ? skills.slice(0, 15) : ["Fundamentals"];
+  const currentGaps = gaps.length > 0 ? gaps.slice(0, 10) : ["System Design", "Testing", "CI/CD"];
 
-Return JSON:
+  const buildPrompt = (isRetry = false, previousError?: string) => `Generate a complete 12-week career roadmap for: "${sanitizedRole}".
+Skills: ${JSON.stringify(currentSkills)}
+Gaps: ${JSON.stringify(currentGaps)}
+
+REQUIREMENTS:
+1. Cover weeks 1 to 12 with exactly 2 focused, progressive goals per week (total 24 weekly goals).
+2. Keep each goal description concise (1-2 sentences, maximum 25 words) to avoid response truncation.
+3. Provide 3 monthly milestone goals (month 1, 2, and 3).
+4. Provide 2-3 project ideas with technologies and difficulty ("beginner" | "intermediate" | "advanced").
+5. Provide a curated techStack array.
+${isRetry && previousError ? `CRITICAL: The previous generation failed JSON parsing with: "${previousError}". Output strictly valid JSON without syntax errors or unescaped characters.` : ""}
+
+OUTPUT FORMAT:
+Return ONLY a valid JSON object matching this exact structure:
 {
   "id": "roadmap-${Date.now()}",
-  "title": "Your Path to ${role}",
-  "weeklyGoals": [{ "id": "w1-goal1", "title": "...", "description": "...", "week": 1, "completed": false }],
-  "monthlyGoals": [{ "id": "m1-goal1", "title": "...", "description": "...", "month": 1, "completed": false }],
-  "projectIdeas": [{ "name": "...", "description": "...", "technologies": ["..."], "difficulty": "intermediate", "estimatedHours": 40 }],
+  "title": "Your Path to ${sanitizedRole}",
+  "weeklyGoals": [
+    { "id": "w1-g1", "title": "...", "description": "...", "week": 1, "completed": false }
+  ],
+  "monthlyGoals": [
+    { "id": "m1-g1", "title": "...", "description": "...", "month": 1, "completed": false }
+  ],
+  "projectIdeas": [
+    { "name": "...", "description": "...", "technologies": ["..."], "difficulty": "intermediate", "estimatedHours": 40 }
+  ],
   "techStack": ["..."],
   "status": "active"
 }
-3-4 goals per week, progressive difficulty. Return ONLY the JSON.`;
 
-  try {
-    const response = await ai().generateContent(prompt);
-    const roadmap = extractJSON<RoadmapData>(response);
+Strictly return ONLY the JSON object. No markdown code blocks, no backticks, no explanatory text.`;
 
-    return {
-      id: roadmap.id || `roadmap-${Date.now()}`,
-      title: roadmap.title || `Your Path to ${role}`,
-      weeklyGoals: Array.isArray(roadmap.weeklyGoals)
-        ? roadmap.weeklyGoals
-        : [],
-      monthlyGoals: Array.isArray(roadmap.monthlyGoals)
-        ? roadmap.monthlyGoals
-        : [],
-      projectIdeas: Array.isArray(roadmap.projectIdeas)
-        ? roadmap.projectIdeas
-        : [],
-      techStack: Array.isArray(roadmap.techStack) ? roadmap.techStack : [],
-      status: "active",
-    };
-  } catch (error) {
-    if (error instanceof Error && error.message.includes("parse")) {
-      throw error;
+  const parseAndValidate = (rawText: string): RoadmapData => {
+    const rawParsed = extractJSON<unknown>(rawText);
+    const parsed = roadmapDataSchema.safeParse(rawParsed);
+    if (!parsed.success) {
+      const issueDetails = parsed.error.issues
+        .map((i) => `${i.path.join(".")}: ${i.message}`)
+        .join("; ");
+      throw new Error(`Roadmap schema validation failed: ${issueDetails}`);
     }
-    throw new Error(
-      `Roadmap generation failed: ${error instanceof Error ? error.message : "Unknown error"}`
-    );
-  }
+    return parsed.data as RoadmapData;
+  };
+
+  return executeWithObservabilityAndCache<RoadmapData>({
+    feature: "roadmap",
+    action: "generate",
+    userId,
+    context: {
+      role: sanitizedRole,
+      skills: [...currentSkills].sort(),
+      gaps: [...currentGaps].sort(),
+    },
+    prompt: buildPrompt(),
+    options: { json: true },
+    ttlSeconds: CACHE_TTL.ROADMAP,
+    bypassCache,
+    parseResult: parseAndValidate,
+    getRetryPrompt: (prevErr) => buildPrompt(true, prevErr),
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -225,7 +274,8 @@ Return JSON:
 
 export async function generateInterviewQuestions(
   skills: string[],
-  type: string
+  type: string,
+  userId?: string | null
 ): Promise<InterviewQuestion[]> {
   const prompt = `Generate 8-10 interview questions for skills: ${JSON.stringify(skills)}
 Type: ${type} (hr=behavioral, technical=coding/system design, project=deep-dive)
@@ -235,10 +285,8 @@ Return JSON array:
 [{ "id": "q1", "question": "...", "type": "${type}", "difficulty": "easy|medium|hard", "skill": "...", "sampleAnswer": "..." }]
 Mix difficulties. Technical: test paradigms, indexes, caching, race conditions. Return ONLY the JSON.`;
 
-  try {
-    const response = await ai().generateContent(prompt);
-    const questions = extractJSON<InterviewQuestion[]>(response);
-
+  const parseResult = (raw: string): InterviewQuestion[] => {
+    const questions = extractJSON<InterviewQuestion[]>(raw);
     if (!Array.isArray(questions)) {
       throw new Error("Expected an array of questions");
     }
@@ -251,14 +299,21 @@ Mix difficulties. Technical: test paradigms, indexes, caching, race conditions. 
       skill: q.skill || "General",
       sampleAnswer: q.sampleAnswer,
     }));
-  } catch (error) {
-    if (error instanceof Error && error.message.includes("parse")) {
-      throw error;
-    }
-    throw new Error(
-      `Interview question generation failed: ${error instanceof Error ? error.message : "Unknown error"}`
-    );
-  }
+  };
+
+  return executeWithObservabilityAndCache<InterviewQuestion[]>({
+    feature: "interview",
+    action: "generate_questions",
+    userId,
+    context: {
+      skills: [...skills].sort(),
+      type,
+    },
+    prompt,
+    options: { json: true },
+    ttlSeconds: CACHE_TTL.INTERVIEW,
+    parseResult,
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -267,7 +322,8 @@ Mix difficulties. Technical: test paradigms, indexes, caching, race conditions. 
 
 export async function generateLinkedInAnalysis(
   profileText: string,
-  url: string
+  url: string,
+  userId?: string | null
 ): Promise<{
   headline: string;
   summary: string;
@@ -299,34 +355,31 @@ Return JSON:
 }
 Return ONLY the JSON.`;
 
-  try {
-    const response = await ai().generateContent(prompt);
-    return extractJSON(response);
-  } catch (error) {
-    console.error("Error generating LinkedIn analysis:", error);
-    return {
-      headline: "Professional Developer",
-      summary: "Technical profile synced from LinkedIn.",
-      experience: [],
-      education: [],
-      skills: [],
-      analysis: {
-        strengths: ["Profile connected successfully"],
-        improvements: ["Add a bio/summary to enrich recommendations"],
-        profileCompleteness: 50,
-        jobReadyFactors: [],
-      },
-    };
-  }
+  return executeWithObservabilityAndCache({
+    feature: "linkedin",
+    action: "analyze",
+    userId,
+    context: {
+      url,
+      snippet: profileText.slice(0, 300),
+    },
+    prompt,
+    options: { json: true },
+    ttlSeconds: CACHE_TTL.RESUME,
+    parseResult: (raw) => extractJSON(raw),
+  });
 }
 
-export async function generateDeveloperIntelligenceReport(data: {
-  github?: unknown;
-  resume?: unknown;
-  portfolio?: unknown;
-  linkedin?: unknown;
-  userGoals?: string[];
-}): Promise<{
+export async function generateDeveloperIntelligenceReport(
+  data: {
+    github?: unknown;
+    resume?: unknown;
+    portfolio?: unknown;
+    linkedin?: unknown;
+    userGoals?: string[];
+  },
+  userId?: string | null
+): Promise<{
   summary: string;
   readinessScore: number;
   readinessScores: {
@@ -403,9 +456,8 @@ Scores 0-100. Return ONLY the JSON.`;
     };
   }
 
-  try {
-    const response = await ai().generateContent(prompt);
-    const parsed = extractJSON<RawReportResult>(response);
+  const parseResult = (raw: string) => {
+    const parsed = extractJSON<RawReportResult>(raw);
 
     const findNestedScore = (obj: unknown, keys: string[]): unknown => {
       if (!obj || typeof obj !== "object") return undefined;
@@ -462,29 +514,18 @@ Scores 0-100. Return ONLY the JSON.`;
         other: Array.isArray(parsed.skillGapMatrix?.other) ? parsed.skillGapMatrix.other.map(String) : [],
       }
     };
-  } catch (error) {
-    console.error("Error generating unified developer intelligence report:", error);
-    return {
-      summary: "Unable to compile unified intelligence report at this time. Please make sure you have connected at least one channel (GitHub, Resume, Portfolio, or LinkedIn) to populate data.",
-      readinessScore: 0,
-      readinessScores: {
-        career: 0,
-        placement: 0,
-        internship: 0,
-        portfolio: 0,
-        interview: 0
-      },
-      strengths: ["Profile initialized"],
-      weaknesses: ["Insufficient telemetry connected to synthesize performance intelligence"],
-      recommendations: ["Link GitHub, sync your LinkedIn, or upload a resume to start"],
-      careerAlignment: [],
-      milestones: [],
-      skillGapMatrix: {
-        languages: [],
-        frameworks: [],
-        gaps: [],
-        other: []
-      }
-    };
-  }
+  };
+
+  return executeWithObservabilityAndCache({
+    feature: "intelligence",
+    action: "generate_report",
+    userId,
+    context: {
+      userGoals: data.userGoals,
+    },
+    prompt,
+    options: { json: true },
+    ttlSeconds: CACHE_TTL.READINESS,
+    parseResult,
+  });
 }

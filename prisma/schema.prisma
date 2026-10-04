@@ -102,6 +102,8 @@ model User {
   notifications   Notification[]
   linkedinAnalysis LinkedInAnalysis?
   intelligenceReport DeveloperIntelligenceReport?
+  aiUsageLogs     AIUsageLog[]
+  aiCaches        AICache[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -407,4 +409,65 @@ model DeveloperIntelligenceReport {
   updatedAt      DateTime @updatedAt
 
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ============================================================
+// AI Observability & Cost Tracking
+// ============================================================
+
+model AIUsageLog {
+  id                String    @id @default(cuid())
+  userId            String?
+  provider          String
+  model             String
+  feature           String    // "roadmap" | "resume" | "skill_gap" | "portfolio" | "interview" | "readiness" | "coach" | "projects"
+  action            String    // "generate" | "analyze" | "evaluate" | "chat"
+  inputTokens       Int       @default(0)
+  outputTokens      Int       @default(0)
+  totalTokens       Int       @default(0)
+  cachedInputTokens Int?
+  isEstimatedTokens Boolean   @default(false)
+  inputCost         Float     @default(0)
+  outputCost        Float     @default(0)
+  totalCost         Float     @default(0)
+  currency          String    @default("USD")
+  cacheHit          Boolean   @default(false)
+  costSaved         Float     @default(0)
+  latencyMs         Int       @default(0)
+  status            String    @default("SUCCESS") // "SUCCESS" | "FAILED"
+  errorCode         String?
+  requestHash       String?
+  createdAt         DateTime  @default(now())
+
+  user              User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([feature])
+  @@index([provider, model])
+  @@index([createdAt])
+  @@index([cacheHit])
+}
+
+// ============================================================
+// Smart AI Cache
+// ============================================================
+
+model AICache {
+  id          String    @id @default(cuid())
+  cacheKey    String    @unique
+  userId      String?
+  feature     String
+  provider    String
+  model       String
+  response    String    @db.Text
+  metadata    Json?     @default("{}")
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user        User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([feature])
+  @@index([expiresAt])
 }

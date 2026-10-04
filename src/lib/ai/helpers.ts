@@ -6,23 +6,41 @@
  * Extract JSON from an AI response that may contain markdown code blocks.
  */
 export function extractJSON<T>(text: string): T {
-  // Try to extract from markdown code blocks first
-  const codeBlockMatch = text.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
-  const jsonString = codeBlockMatch ? codeBlockMatch[1].trim() : text.trim();
+  if (!text || typeof text !== "string") {
+    throw new Error("Cannot extract JSON: input is empty or not a string");
+  }
 
+  // 1. Try stripping markdown code fences first
+  const codeBlockMatch = text.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/i);
+  const candidate = codeBlockMatch ? codeBlockMatch[1].trim() : text.trim();
+
+  // 2. Direct parse attempt
   try {
-    return JSON.parse(jsonString) as T;
-  } catch {
-    // Try to find any JSON object or array in the text
-    const objectMatch = jsonString.match(/(\{[\s\S]*\})/);
-    const arrayMatch = jsonString.match(/(\[[\s\S]*\])/);
-    const match = objectMatch || arrayMatch;
-
-    if (match) {
-      return JSON.parse(match[1]) as T;
+    return JSON.parse(candidate) as T;
+  } catch (firstErr) {
+    // 3. Try to locate outermost JSON object or array bounds safely
+    const firstBrace = candidate.indexOf("{");
+    const lastBrace = candidate.lastIndexOf("}");
+    if (firstBrace !== -1 && lastBrace > firstBrace) {
+      try {
+        return JSON.parse(candidate.slice(firstBrace, lastBrace + 1)) as T;
+      } catch {
+        // Fall through to error
+      }
     }
 
-    throw new Error("Failed to parse AI response as JSON");
+    const firstBracket = candidate.indexOf("[");
+    const lastBracket = candidate.lastIndexOf("]");
+    if (firstBracket !== -1 && lastBracket > firstBracket) {
+      try {
+        return JSON.parse(candidate.slice(firstBracket, lastBracket + 1)) as T;
+      } catch {
+        // Fall through to error
+      }
+    }
+
+    const detail = firstErr instanceof Error ? firstErr.message : "Malformed JSON";
+    throw new Error(`Failed to parse AI response as JSON: ${detail}`);
   }
 }
 

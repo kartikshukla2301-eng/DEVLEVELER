@@ -30,9 +30,42 @@ registerProvider("openai", () => new OpenAIProvider());
 export { getProvider } from "./provider";
 export { getProviderName, getProviderConfig } from "./provider";
 export { extractJSON, clampScore, withRetry, executeWithTimeout } from "./helpers";
-export { cacheKey, getCached, setCached, clearCache } from "./cache";
+export {
+  generateAICacheKey,
+  getCachedAI,
+  setCachedAI,
+  invalidateUserAICache,
+  invalidateAICacheKey,
+  cleanupExpiredAICache,
+  cacheKey,
+  getCached,
+  setCached,
+  clearCache,
+  CACHE_TTL,
+} from "./cache";
+export { AI_MODEL_PRICING, getModelPricing, calculateAICost } from "./pricing";
+export {
+  executeWithObservabilityAndCache,
+  getTotalAISpend,
+  getAISpendByProvider,
+  getAISpendByModel,
+  getAISpendByFeature,
+  getAITokenUsage,
+  getAICacheMetrics,
+  getAIAverageCostPerOperation,
+} from "./observability";
 export { MODELS, DEFAULT_MODELS, getModelConfig } from "./models";
-export type { AIProvider, ChatMessage, ChatSession, AIProviderName } from "./types";
+export type {
+  AIProvider,
+  ChatMessage,
+  ChatSession,
+  AIProviderName,
+  GenerateContentOptions,
+  AIUsage,
+  AIResponse,
+} from "./types";
+export type { ModelPricing, CalculatedCost } from "./pricing";
+export type { ObservabilityOptions, UsageFilters } from "./observability";
 
 /**
  * Get the default AI provider instance.

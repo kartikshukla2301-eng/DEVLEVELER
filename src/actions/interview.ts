@@ -3,7 +3,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { generateInterviewQuestions } from "@/lib/gemini";
-import { ai, extractJSON } from "@/lib/ai";
+import { extractJSON } from "@/lib/ai";
 import { calculateLevel, XP_REWARDS } from "@/lib/xp";
 import { calculateScore } from "@/actions/score";
 import type { ApiResponse, InterviewQuestion } from "@/types";
@@ -71,7 +71,8 @@ export async function generateInterviewSessionAction(
     // 2. Call Gemini
     const questions = await generateInterviewQuestions(
       uniqueSkills.length > 0 ? uniqueSkills : ["TypeScript", "React", "System Design"],
-      type
+      type,
+      userId
     );
 
     // 3. Store session in DB
@@ -166,8 +167,17 @@ Return JSON:
 }
 Check technical correctness, clarity, structured reasoning. Return ONLY the JSON.`;
 
-    const response = await ai().generateContent(prompt);
-    const evaluation = extractJSON<AnswerEvaluation>(response);
+    const { executeWithObservabilityAndCache } = await import("@/lib/ai");
+    const evaluation = await executeWithObservabilityAndCache<AnswerEvaluation>({
+      feature: "interview",
+      action: "evaluate_answer",
+      userId: session.user.id,
+      context: { question: questionText.trim(), answer: userAnswer.trim() },
+      prompt,
+      options: { json: true },
+      ttlSeconds: 7 * 24 * 3600,
+      parseResult: (raw) => extractJSON<AnswerEvaluation>(raw),
+    });
 
     return { success: true, data: evaluation };
   } catch (error) {

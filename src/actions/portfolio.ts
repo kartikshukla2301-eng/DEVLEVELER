@@ -6,7 +6,7 @@ import { portfolioUrlSchema } from "@/lib/validators";
 import { calculateLevel, XP_REWARDS } from "@/lib/xp";
 import { calculateScore } from "@/actions/score";
 import { unlockAchievement } from "@/lib/achievements";
-import { ai, extractJSON } from "@/lib/ai";
+import { extractJSON } from "@/lib/ai";
 import type { ApiResponse, PortfolioAnalysisData } from "@/types";
 import { enforceRateLimit, RATE_LIMITS, rateLimitKey } from "@/lib/rate-limit";
 
@@ -83,8 +83,19 @@ Return JSON:
 }
 Return ONLY the JSON.`;
 
-    const response = await ai().generateContent(prompt);
-    const analysis = extractJSON<PortfolioAnalysisData>(response);
+    const { executeWithObservabilityAndCache, invalidateUserAICache, CACHE_TTL } = await import("@/lib/ai");
+    const analysis = await executeWithObservabilityAndCache<PortfolioAnalysisData>({
+      feature: "portfolio",
+      action: "analyze",
+      userId,
+      context: { url: targetUrl, snippetHash: pageHtmlSnippet.slice(0, 300) },
+      prompt,
+      options: { json: true },
+      ttlSeconds: CACHE_TTL.PORTFOLIO,
+      parseResult: (raw) => extractJSON<PortfolioAnalysisData>(raw),
+    });
+
+    await invalidateUserAICache(userId, "readiness").catch(() => {});
 
     // 6. Save to Database
     await prisma.portfolioAnalysis.create({

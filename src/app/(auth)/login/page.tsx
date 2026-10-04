@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Code2, ArrowLeft, Loader2 } from "lucide-react";
 
-function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
+function GithubIcon({ className = "h-5 w-5 shrink-0 text-[#0f172a]", ...props }: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -15,6 +15,7 @@ function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      className={className}
       {...props}
     >
       <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
@@ -59,27 +60,27 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="card-base p-8 w-full max-w-[400px] bg-[var(--background-secondary)] border border-[var(--border)] rounded-2xl shadow-2xl space-y-6">
+    <div className="card-base p-8 w-full max-w-[400px] bg-white border border-slate-200/90 rounded-2xl shadow-xl space-y-6">
       
       {/* Branding */}
       <div className="flex flex-col items-center gap-2 text-center">
         <Link 
           href="/" 
-          className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--accent)] text-white hover:opacity-90 transition-opacity"
+          className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white hover:opacity-90 transition-opacity shadow-xs"
         >
           <Code2 className="h-5.5 w-5.5" />
         </Link>
-        <h2 className="text-xl font-bold text-white mt-2">
+        <h2 className="text-xl font-bold text-[#0f172a] mt-2">
           Sign In
         </h2>
-        <p className="text-xs text-[var(--foreground-secondary)]">
+        <p className="text-xs text-[#475569]">
           Access your DevLeveler insights & Career Coach.
         </p>
       </div>
 
       {/* Error block */}
       {error && (
-        <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-[11px] text-red-400 font-medium">
+        <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-[11px] text-red-600 font-medium">
           {error}
         </div>
       )}
@@ -87,7 +88,7 @@ export default function LoginPage() {
       {/* Credentials form */}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-[10px] uppercase font-bold text-[var(--foreground-tertiary)] tracking-wider mb-1">
+          <label className="block text-[10px] uppercase font-bold text-[#475569] tracking-wider mb-1">
             Email Address
           </label>
           <input
@@ -96,19 +97,19 @@ export default function LoginPage() {
             onChange={(e) => setEmail(e.target.value)}
             disabled={loading}
             placeholder="dev@example.com"
-            className="w-full h-10 px-3 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 transition-colors"
+            className="w-full h-10 px-3 rounded-lg border border-slate-200 bg-white text-xs text-[#0f172a] placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
             required
           />
         </div>
 
         <div>
           <div className="flex justify-between items-center mb-1">
-            <label className="block text-[10px] uppercase font-bold text-[var(--foreground-tertiary)] tracking-wider">
+            <label className="block text-[10px] uppercase font-bold text-[#475569] tracking-wider">
               Password
             </label>
             <Link 
               href="/forgot-password" 
-              className="text-[10px] font-semibold text-[var(--accent)] hover:underline"
+              className="text-[10px] font-semibold text-blue-600 hover:underline"
             >
               Forgot?
             </Link>
@@ -119,7 +120,7 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             disabled={loading}
             placeholder="••••••••"
-            className="w-full h-10 px-3 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 transition-colors"
+            className="w-full h-10 px-3 rounded-lg border border-slate-200 bg-white text-xs text-[#0f172a] placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-colors"
             required
           />
         </div>
@@ -127,7 +128,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full h-10 rounded-lg bg-[var(--accent)] text-white text-xs font-semibold hover:bg-[var(--accent-hover)] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+          className="w-full h-10 rounded-lg bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-xs"
         >
           {loading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
@@ -138,23 +139,24 @@ export default function LoginPage() {
       </form>
 
       {/* Social Login Separator */}
-      <div className="relative flex items-center justify-center py-2">
-        <hr className="w-full border-[var(--border)]" />
-        <span className="absolute bg-[var(--background-secondary)] px-3 text-[9px] uppercase font-bold text-[var(--foreground-tertiary)] tracking-widest">
+      <div className="relative flex items-center justify-center py-1">
+        <hr className="w-full border-slate-200" />
+        <span className="absolute bg-white px-3 text-[9px] uppercase font-bold text-[#64748b] tracking-widest">
           OR CONTINUE WITH
         </span>
       </div>
 
       {/* OAuth Buttons */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="flex flex-col gap-2.5">
         {/* Google OAuth */}
         <button
           onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
           disabled={loading}
           type="button"
-          className="flex h-10 items-center justify-center gap-2.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 text-xs font-semibold text-white hover:bg-[var(--surface-hover)] transition-colors disabled:opacity-50"
+          id="google-oauth-btn"
+          className="w-full h-11 flex items-center justify-center gap-2.5 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-[#0f172a] hover:bg-slate-50 hover:border-slate-300 hover:shadow-xs transition-all duration-200 disabled:opacity-50 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
         >
-          <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
+          <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24">
             <path
               fill="#4285F4"
               d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v3.92h6.69c-.29 1.5-.1.85-.7 1.94l3.11 2.41c1.82-1.68 2.85-4.16 2.85-6.2Z"
@@ -172,7 +174,7 @@ export default function LoginPage() {
               d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.43-3.43C17.94 1.19 15.22 0 12 0 9.29 0 7.03 2.16 5.46 5.85l3.21 2.48c.75-2.25 2.85-3.93 5.33-3.93Z"
             />
           </svg>
-          Google
+          <span className="font-semibold text-sm text-[#0f172a]">Continue with Google</span>
         </button>
 
         {/* GitHub OAuth */}
@@ -180,19 +182,20 @@ export default function LoginPage() {
           onClick={() => signIn("github", { callbackUrl: "/dashboard" })}
           disabled={loading}
           type="button"
-          className="flex h-10 items-center justify-center gap-2.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 text-xs font-semibold text-white hover:bg-[var(--surface-hover)] transition-colors disabled:opacity-50"
+          id="github-oauth-btn"
+          className="w-full h-11 flex items-center justify-center gap-2.5 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-[#0f172a] hover:bg-slate-50 hover:border-slate-300 hover:shadow-xs transition-all duration-200 disabled:opacity-50 cursor-pointer shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
         >
-          <GithubIcon className="h-4 w-4 shrink-0 text-white" />
-          GitHub
+          <GithubIcon className="h-5 w-5 shrink-0 text-[#0f172a]" />
+          <span className="font-semibold text-sm text-[#0f172a]">Continue with GitHub</span>
         </button>
       </div>
 
       {/* Switch to Sign Up */}
-      <div className="text-center pt-2 text-xs text-[var(--foreground-secondary)] border-t border-[var(--border)]">
+      <div className="text-center pt-2 text-xs text-[#475569] border-t border-slate-200">
         Don&apos;t have an account?{" "}
         <Link 
           href="/signup" 
-          className="font-bold text-[var(--accent)] hover:underline"
+          className="font-bold text-blue-600 hover:underline"
         >
           Sign Up
         </Link>
@@ -202,7 +205,7 @@ export default function LoginPage() {
       <div className="text-center pt-1">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-xs text-[var(--foreground-tertiary)] hover:text-white transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs text-[#64748b] hover:text-[#0f172a] transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           Back to home

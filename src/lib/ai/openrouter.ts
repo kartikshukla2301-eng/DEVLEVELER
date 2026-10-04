@@ -2,7 +2,7 @@
 // DevLeveler — OpenRouter AI Provider
 // ============================================================
 
-import type { AIProvider, ChatMessage, ChatSession } from "./types";
+import type { AIProvider, ChatMessage, ChatSession, GenerateContentOptions, AIResponse, AIUsage } from "./types";
 import { getProviderConfig } from "./provider";
 import { DEFAULT_MODELS } from "./models";
 
@@ -27,13 +27,24 @@ export class OpenRouterProvider implements AIProvider {
 
   private async request(
     messages: Array<{ role: string; content: string }>,
-    system?: string
-  ): Promise<string> {
+    system?: string,
+    options?: GenerateContentOptions
+  ): Promise<AIResponse> {
     const allMessages = [];
     if (system) {
       allMessages.push({ role: "system", content: system });
     }
     allMessages.push(...messages);
+
+    const body: Record<string, unknown> = {
+      model: this.model,
+      messages: allMessages,
+      temperature: 0.7,
+    };
+
+    if (options?.json) {
+      body.response_format = { type: "json_object" };
+    }
 
     const response = await fetch(`${this.baseUrl}/chat/completions`, {
       method: "POST",
@@ -43,11 +54,7 @@ export class OpenRouterProvider implements AIProvider {
         "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
         "X-Title": "DevLeveler",
       },
-      body: JSON.stringify({
-        model: this.model,
-        messages: allMessages,
-        temperature: 0.7,
-      }),
+      body: JSON.stringify(body),
     });
 
     if (!response.ok) {
@@ -56,21 +63,48 @@ export class OpenRouterProvider implements AIProvider {
     }
 
     const data = await response.json();
-    return data.choices?.[0]?.message?.content || "";
+    const text = data.choices?.[0]?.message?.content || "";
+    const meta = data.usage;
+
+    const usage: AIUsage = {
+      provider: "openrouter",
+      model: this.model,
+      inputTokens: typeof meta?.prompt_tokens === "number" ? meta.prompt_tokens : null,
+      outputTokens: typeof meta?.completion_tokens === "number" ? meta.completion_tokens : null,
+      totalTokens: typeof meta?.total_tokens === "number" ? meta.total_tokens : null,
+      cachedInputTokens: typeof meta?.prompt_tokens_details?.cached_tokens === "number" ? meta.prompt_tokens_details.cached_tokens : null,
+      isEstimated: false,
+    };
+
+    return { text, usage };
   }
 
-  async generateContent(prompt: string): Promise<string> {
-    return this.request([{ role: "user", content: prompt }]);
+  async generateWithUsage(
+    prompt: string,
+    options?: GenerateContentOptions
+  ): Promise<AIResponse> {
+    return this.request([{ role: "user", content: prompt }], undefined, options);
+  }
+
+  async generateContent(
+    prompt: string,
+    options?: GenerateContentOptions
+  ): Promise<string> {
+    const res = await this.generateWithUsage(prompt, options);
+    return res.text;
   }
 
   async generateWithSystem(
     systemPrompt: string,
-    userPrompt: string
+    userPrompt: string,
+    options?: GenerateContentOptions
   ): Promise<string> {
-    return this.request(
+    const res = await this.request(
       [{ role: "user", content: userPrompt }],
-      systemPrompt
+      systemPrompt,
+      options
     );
+    return res.text;
   }
 
   startChat(
@@ -85,7 +119,8 @@ export class OpenRouterProvider implements AIProvider {
     return {
       sendMessage: async (message: string): Promise<string> => {
         const allMessages = [...messages, { role: "user", content: message }];
-        const responseText = await this.request(allMessages, systemInstruction);
+        const res = await this.request(allMessages, systemInstruction);
+        const responseText = res.text;
         messages.push({ role: "user", content: message });
         messages.push({ role: "assistant", content: responseText });
         return responseText;

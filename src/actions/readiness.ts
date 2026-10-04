@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { calculateLevel } from "@/lib/xp";
 import { unlockAchievement } from "@/lib/achievements";
-import { ai, extractJSON } from "@/lib/ai";
+import { extractJSON } from "@/lib/ai";
 import type { ApiResponse } from "@/types";
 import { enforceRateLimit, RATE_LIMITS, rateLimitKey } from "@/lib/rate-limit";
 
@@ -97,8 +97,22 @@ export async function analyzeReadinessAction(): Promise<ApiResponse<ReadinessRes
     - Never use expressions like "AI", "AI mentor", "large language model", or "chatbot". Refer to yourself only as "Career Coach".
     - Return ONLY the JSON object. Do not wrap in extra commentary or text.`;
 
-    const response = await ai().generateContent(prompt);
-    const analysis = extractJSON<ReadinessResult>(response);
+    const { executeWithObservabilityAndCache, CACHE_TTL } = await import("@/lib/ai");
+    const analysis = await executeWithObservabilityAndCache<ReadinessResult>({
+      feature: "readiness",
+      action: "analyze",
+      userId,
+      context: {
+        devScore: devScore ? devScore.overallScore : 0,
+        githubLanguages,
+        resumeSkills,
+        projectCount: projectList.length,
+      },
+      prompt,
+      options: { json: true },
+      ttlSeconds: CACHE_TTL.READINESS,
+      parseResult: (raw) => extractJSON<ReadinessResult>(raw),
+    });
 
     // 4. Save to Database
     await prisma.readinessAnalysis.upsert({

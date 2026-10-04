@@ -61,15 +61,15 @@ const CONTACT_LINKS = [
     label: "GitHub",
     value: "kartikshukla2301-eng",
     href: "https://github.com/kartikshukla2301-eng",
-    color: "text-zinc-300",
-    bgColor: "bg-zinc-800/50"
+    color: "text-[var(--foreground)]",
+    bgColor: "bg-[var(--surface-container-high)]"
   },
   {
     icon: LinkedinIcon,
     label: "LinkedIn",
     value: "in/kartik-shukla-cse",
     href: "https://www.linkedin.com/in/kartik-shukla-cse",
-    color: "text-cyan-400",
+    color: "text-cyan-500",
     bgColor: "bg-cyan-500/10"
   },
   {
@@ -77,7 +77,7 @@ const CONTACT_LINKS = [
     label: "Portfolio",
     value: "kartik-portfolio-chi-eight.vercel.app",
     href: "https://kartik-portfolio-chi-eight.vercel.app",
-    color: "text-purple-400",
+    color: "text-purple-500",
     bgColor: "bg-purple-500/10"
   }
 ];
@@ -120,7 +120,7 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="relative py-24 border-t border-[var(--border)]">
+    <section id="contact" className="relative py-16 sm:py-20 border-t border-[var(--border)]">
       {/* Background decoration */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-blue-500/5 rounded-full blur-[130px] pointer-events-none" />
 
@@ -134,27 +134,27 @@ export function Contact() {
           transition={{ duration: 0.6 }}
           className="text-center max-w-2xl mx-auto"
         >
-          <div className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 px-3 py-1 text-[10px] font-bold text-[var(--accent)] uppercase tracking-wider">
-            Contact
+          <div className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-blue-50 border border-blue-200 px-3.5 py-1 text-[10px] font-bold text-blue-700 uppercase tracking-widest shadow-xs">
+            Direct Inquiries
           </div>
-          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl gradient-text">
+          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-[#0f172a]">
             Get in Touch
           </h2>
-          <p className="mt-4 text-sm sm:text-base text-[var(--foreground-secondary)] leading-relaxed">
+          <p className="mt-4 text-sm sm:text-base text-[#334155] leading-relaxed font-normal">
             Have questions about DevLeveler or want to collaborate? Reach out through any of 
             the profiles below or send a direct inquiry.
           </p>
         </motion.div>
 
-        <div className="mt-16 grid gap-10 lg:grid-cols-12 items-start">
+        <div className="mt-10 sm:mt-12 grid gap-10 lg:grid-cols-12 items-start">
           
           {/* Left Column: Direct Links */}
           <div className="lg:col-span-5 space-y-4">
-            <h3 className="text-base font-bold text-white mb-6 uppercase tracking-wider">
+            <h3 className="text-sm font-bold text-[#0f172a] mb-5 uppercase tracking-wider">
               Developer Info
             </h3>
             
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+            <div className="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-1">
               {CONTACT_LINKS.map((link, idx) => (
                 <motion.a
                   key={link.label}
@@ -165,16 +165,16 @@ export function Contact() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.4, delay: idx * 0.08 }}
-                  className="card-base p-4 border-[var(--border)] bg-[var(--card)] hover:border-zinc-800 transition-all flex items-center gap-4 group"
+                  className="card-interactive p-4 border border-slate-200/90 rounded-2xl bg-white hover:border-blue-600 transition-all flex items-center gap-4 group shadow-xs hover:shadow-md"
                 >
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${link.bgColor} shrink-0 group-hover:scale-105 transition-transform`}>
+                  <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${link.bgColor} shrink-0 group-hover:scale-105 transition-transform shadow-xs`}>
                     <link.icon className={`h-5 w-5 ${link.color}`} />
                   </div>
                   <div className="space-y-0.5 min-w-0">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--foreground-tertiary)] block">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#475569] block">
                       {link.label}
                     </span>
-                    <span className="text-xs sm:text-sm text-[var(--foreground-secondary)] group-hover:text-white transition-colors truncate block">
+                    <span className="text-xs sm:text-sm text-[#0f172a] group-hover:text-blue-700 transition-colors truncate block font-medium">
                       {link.value}
                     </span>
                   </div>
@@ -190,9 +190,9 @@ export function Contact() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="card-base p-6 sm:p-8 border-[var(--border)] bg-[var(--card)]/60"
+              className="p-6 sm:p-8 rounded-3xl border border-slate-200/90 bg-white shadow-lg"
             >
-              <h3 className="text-base font-bold text-white mb-6 uppercase tracking-wider">
+              <h3 className="text-base font-bold text-[#0f172a] mb-6 uppercase tracking-wider">
                 Send a Message
               </h3>
 
@@ -209,7 +209,7 @@ export function Contact() {
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-1.5">
-                    <label htmlFor="contact-name" className="text-[10px] font-bold uppercase text-[var(--foreground-tertiary)] tracking-wider">
+                    <label htmlFor="contact-name" className="text-xs font-semibold text-[#0f172a]">
                       Name
                     </label>
                     <input
@@ -219,12 +219,12 @@ export function Contact() {
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       placeholder="Your name"
-                      className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-lg px-4 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[var(--accent)] transition-colors"
+                      className="w-full bg-slate-50/80 border border-slate-300 rounded-xl px-4 py-2.5 text-xs text-[#0f172a] placeholder-[#64748b] focus:outline-none focus:border-blue-600 focus:bg-white transition-colors"
                       disabled={status === "sending" || status === "success"}
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label htmlFor="contact-email" className="text-[10px] font-bold uppercase text-[var(--foreground-tertiary)] tracking-wider">
+                    <label htmlFor="contact-email" className="text-xs font-semibold text-[#0f172a]">
                       Email Address
                     </label>
                     <input
@@ -234,14 +234,14 @@ export function Contact() {
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       placeholder="you@example.com"
-                      className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-lg px-4 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[var(--accent)] transition-colors"
+                      className="w-full bg-slate-50/80 border border-slate-300 rounded-xl px-4 py-2.5 text-xs text-[#0f172a] placeholder-[#64748b] focus:outline-none focus:border-blue-600 focus:bg-white transition-colors"
                       disabled={status === "sending" || status === "success"}
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label htmlFor="contact-message" className="text-[10px] font-bold uppercase text-[var(--foreground-tertiary)] tracking-wider">
+                  <label htmlFor="contact-message" className="text-xs font-semibold text-[#0f172a]">
                     Message
                   </label>
                   <textarea
@@ -251,19 +251,19 @@ export function Contact() {
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="How can we help you?"
-                    className="w-full bg-[var(--surface)] border border-[var(--border)] rounded-lg px-4 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-[var(--accent)] transition-colors resize-none"
+                    className="w-full bg-slate-50/80 border border-slate-300 rounded-xl px-4 py-2.5 text-xs text-[#0f172a] placeholder-[#64748b] focus:outline-none focus:border-blue-600 focus:bg-white transition-colors resize-none"
                     disabled={status === "sending" || status === "success"}
                   />
                 </div>
 
                 <div className="pt-2">
                   {status === "error" && errorMsg ? (
-                    <div className="flex items-center gap-2 text-xs font-semibold text-red-400 bg-red-500/10 p-3 rounded-lg border border-red-500/20">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-red-600 bg-red-50 p-3 rounded-xl border border-red-200">
                       <AlertCircle className="h-4.5 w-4.5 shrink-0" />
                       <span>{errorMsg}</span>
                     </div>
                   ) : status === "success" ? (
-                    <div className="flex items-center gap-2 text-xs font-semibold text-[var(--success)] bg-[var(--success-muted)] p-3 rounded-lg border border-[var(--success)]/20">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-emerald-800 bg-emerald-50 p-3 rounded-xl border border-emerald-200">
                       <CheckCircle2 className="h-4.5 w-4.5" />
                       <span>Thank you! Your message was sent successfully.</span>
                     </div>
@@ -271,7 +271,7 @@ export function Contact() {
                     <button
                       type="submit"
                       disabled={status === "sending"}
-                      className="w-full sm:w-auto inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-[var(--accent)] px-6 text-xs font-semibold text-white transition-all hover:bg-[var(--accent-hover)] shadow-lg shadow-blue-500/10 disabled:opacity-50"
+                      className="w-full sm:w-auto inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-blue-600 px-7 text-xs font-bold text-white transition-all hover:bg-blue-700 shadow-md shadow-blue-500/20 disabled:opacity-50"
                     >
                       {status === "sending" ? (
                         <>

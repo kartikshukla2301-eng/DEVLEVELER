@@ -6,7 +6,7 @@ import { calculateLevel, XP_REWARDS } from "@/lib/xp";
 import { calculateScore } from "@/actions/score";
 import { unlockAchievement } from "@/lib/achievements";
 import { env } from "@/lib/env";
-import { ai, extractJSON } from "@/lib/ai";
+import { extractJSON } from "@/lib/ai";
 import type { ApiResponse } from "@/types";
 import type { ProjectAnalysis } from "@prisma/client";
 import { enforceRateLimit, RATE_LIMITS, rateLimitKey } from "@/lib/rate-limit";
@@ -178,8 +178,17 @@ interface GitHubRepoMeta {
     - Return ONLY the JSON object, no additional markdown wrapper text.
     - Never refer to yourself as "AI" — you are "Career Coach".`;
 
-    const response = await ai().generateContent(prompt);
-    const analysis = extractJSON<ProjectAnalysisResult>(response);
+    const { executeWithObservabilityAndCache, CACHE_TTL } = await import("@/lib/ai");
+    const analysis = await executeWithObservabilityAndCache<ProjectAnalysisResult>({
+      feature: "projects",
+      action: "analyze",
+      userId,
+      context: { repoUrl: targetUrl, snippetHash: readmeText.slice(0, 300) },
+      prompt,
+      options: { json: true },
+      ttlSeconds: CACHE_TTL.PORTFOLIO,
+      parseResult: (raw) => extractJSON<ProjectAnalysisResult>(raw),
+    });
 
     // 4. Save to Database
     await prisma.projectAnalysis.create({

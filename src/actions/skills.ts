@@ -138,7 +138,8 @@ export async function analyzeSkillGaps(
       careerGoals,
       experienceDetails,
       educationDetails,
-      portfolioTelemetry
+      portfolioTelemetry,
+      userId
     );
 
     // 4. Save to database

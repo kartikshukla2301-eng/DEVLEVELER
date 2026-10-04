@@ -86,7 +86,8 @@ export async function generateRoadmapAction(
     const roadmap = await generateRoadmap(
       Array.from(new Set(currentSkills)),
       gaps,
-      role
+      role,
+      userId
     );
 
     // 4. Check if user already had an active roadmap (to decide whether to award XP)

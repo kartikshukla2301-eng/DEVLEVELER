@@ -105,8 +105,17 @@ Return JSON:
 }
 Return ONLY the JSON.`;
 
-    const response = await ai().generateContent(prompt);
-    const insights = extractJSON<CoachInsights>(response);
+    const { executeWithObservabilityAndCache, CACHE_TTL } = await import("@/lib/ai");
+    const insights = await executeWithObservabilityAndCache<CoachInsights>({
+      feature: "coach",
+      action: "insights",
+      userId,
+      context,
+      prompt,
+      options: { json: true },
+      ttlSeconds: CACHE_TTL.DEFAULT,
+      parseResult: (raw) => extractJSON<CoachInsights>(raw),
+    });
 
     return { success: true, data: insights };
   } catch (error) {

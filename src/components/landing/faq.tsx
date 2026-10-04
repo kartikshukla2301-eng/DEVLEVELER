@@ -47,8 +47,8 @@ export function FAQ() {
   };
 
   return (
-    <section id="faq" className="relative py-24 border-t border-[var(--border)]">
-      <div className="mx-auto max-w-4xl px-6 relative z-10">
+    <section id="faq" className="relative py-16 sm:py-20 border-t border-[var(--border)] bg-[var(--background)]">
+      <div className="mx-auto max-w-3xl px-6 relative z-10">
         
         {/* Header */}
         <motion.div
@@ -58,36 +58,40 @@ export function FAQ() {
           transition={{ duration: 0.6 }}
           className="text-center"
         >
-          <div className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 px-3 py-1 text-[10px] font-bold text-[var(--accent)] uppercase tracking-wider">
-            FAQ
-          </div>
-          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl gradient-text">
+          <div className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-blue-50 border border-blue-200 px-3.5 py-1 text-[10px] font-bold text-blue-700 uppercase tracking-widest shadow-xs">
             Frequently Asked Questions
+          </div>
+          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-[#0f172a]">
+            Questions & Answers
           </h2>
-          <p className="mt-4 text-sm text-[var(--foreground-secondary)]">
+          <p className="mt-4 text-sm sm:text-base text-[#334155] font-normal leading-relaxed">
             Everything you need to know about the DevLeveler scoring and telemetry platform.
           </p>
         </motion.div>
 
         {/* Accordions */}
-        <div className="mt-16 space-y-4">
+        <div className="mt-10 sm:mt-12 space-y-3.5">
           {FAQS.map((faq, idx) => {
             const isOpen = openIdx === idx;
             return (
               <div
                 key={faq.q}
-                className="card-base overflow-hidden border border-[var(--border)] transition-colors duration-200"
+                className={`overflow-hidden rounded-2xl transition-all duration-200 bg-white ${
+                  isOpen
+                    ? "border-2 border-blue-600/40 shadow-sm ring-2 ring-blue-500/5"
+                    : "border border-slate-200/90 shadow-xs hover:border-slate-300"
+                }`}
               >
                 <button
                   onClick={() => toggle(idx)}
-                  className="flex w-full items-center justify-between p-5 text-left text-xs sm:text-sm font-semibold text-white hover:bg-[var(--surface)] transition-colors"
+                  className="flex w-full items-center justify-between p-5 sm:p-5.5 text-left text-xs sm:text-sm font-semibold text-[#0f172a] hover:text-blue-700 transition-colors"
                   aria-expanded={isOpen}
                   id={`faq-btn-${idx}`}
                 >
-                  <span>{faq.q}</span>
+                  <span className="font-semibold">{faq.q}</span>
                   <ChevronDown
-                    className={`h-4.5 w-4.5 text-[var(--foreground-secondary)] transition-transform duration-200 ${
-                      isOpen ? "rotate-180" : ""
+                    className={`h-4.5 w-4.5 shrink-0 ml-4 transition-transform duration-200 ${
+                      isOpen ? "rotate-180 text-blue-700" : "text-[#64748b]"
                     }`}
                   />
                 </button>
@@ -95,12 +99,12 @@ export function FAQ() {
                 <AnimatePresence initial={false}>
                   {isOpen && (
                     <motion.div
-                      initial={{ height: 0 }}
-                      animate={{ height: "auto" }}
-                      exit={{ height: 0 }}
-                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.22, ease: "easeInOut" }}
                     >
-                      <div className="border-t border-[var(--border)] bg-[var(--background-secondary)]/50 p-5 text-xs sm:text-sm leading-relaxed text-[var(--foreground-secondary)]">
+                      <div className="border-t border-slate-100 bg-slate-50/60 p-5 sm:p-5.5 text-xs sm:text-sm leading-relaxed text-[#334155] font-normal">
                         {faq.a}
                       </div>
                     </motion.div>

@@ -133,6 +133,33 @@ export const roadmapParamsSchema = z.object({
     .max(100, "Role name is too long"),
 });
 
+export const roadmapGoalSchema = z.object({
+  id: z.string().default(() => `goal-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`),
+  title: z.string().min(1, "Goal title is required"),
+  description: z.string().default(""),
+  week: z.number().int().optional(),
+  month: z.number().int().optional(),
+  completed: z.boolean().default(false),
+});
+
+export const projectIdeaSchema = z.object({
+  name: z.string().min(1, "Project name is required"),
+  description: z.string().default(""),
+  technologies: z.array(z.string()).default([]),
+  difficulty: z.enum(["beginner", "intermediate", "advanced"]).default("intermediate"),
+  estimatedHours: z.number().default(40),
+});
+
+export const roadmapDataSchema = z.object({
+  id: z.string().default(() => `roadmap-${Date.now()}`),
+  title: z.string().min(1, "Roadmap title is required"),
+  weeklyGoals: z.array(roadmapGoalSchema).default([]),
+  monthlyGoals: z.array(roadmapGoalSchema).default([]),
+  projectIdeas: z.array(projectIdeaSchema).default([]),
+  techStack: z.array(z.string()).default([]),
+  status: z.enum(["active", "completed", "archived"]).default("active"),
+});
+
 // ---------------------------------------------------------------------------
 // Skill Gap
 // ---------------------------------------------------------------------------

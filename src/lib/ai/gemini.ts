@@ -3,7 +3,7 @@
 // ============================================================
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import type { AIProvider, ChatMessage, ChatSession } from "./types";
+import type { AIProvider, ChatMessage, ChatSession, GenerateContentOptions, AIResponse, AIUsage } from "./types";
 import { getProviderConfig } from "./provider";
 import { DEFAULT_MODELS } from "./models";
 
@@ -25,23 +25,58 @@ export class GeminiProvider implements AIProvider {
     this.modelName = model || config.model || DEFAULT_MODELS.gemini;
   }
 
-  private getModel() {
-    return this.genAI.getGenerativeModel({ model: this.modelName });
+  private getModel(options?: GenerateContentOptions) {
+    return this.genAI.getGenerativeModel({
+      model: this.modelName,
+      generationConfig: {
+        maxOutputTokens: 8192,
+        ...(options?.json ? { responseMimeType: "application/json" } : {}),
+      },
+    });
   }
 
-  async generateContent(prompt: string): Promise<string> {
-    const model = this.getModel();
+  async generateWithUsage(
+    prompt: string,
+    options?: GenerateContentOptions
+  ): Promise<AIResponse> {
+    const model = this.getModel(options);
     const result = await model.generateContent(prompt);
-    return result.response.text();
+    const text = result.response.text();
+    const meta = result.response.usageMetadata;
+
+    const usage: AIUsage = {
+      provider: "gemini",
+      model: this.modelName,
+      inputTokens: typeof meta?.promptTokenCount === "number" ? meta.promptTokenCount : null,
+      outputTokens: typeof meta?.candidatesTokenCount === "number" ? meta.candidatesTokenCount : null,
+      totalTokens: typeof meta?.totalTokenCount === "number" ? meta.totalTokenCount : null,
+      cachedInputTokens: typeof meta?.cachedContentTokenCount === "number" ? meta.cachedContentTokenCount : null,
+      isEstimated: false,
+    };
+
+    return { text, usage };
+  }
+
+  async generateContent(
+    prompt: string,
+    options?: GenerateContentOptions
+  ): Promise<string> {
+    const res = await this.generateWithUsage(prompt, options);
+    return res.text;
   }
 
   async generateWithSystem(
     systemPrompt: string,
-    userPrompt: string
+    userPrompt: string,
+    options?: GenerateContentOptions
   ): Promise<string> {
     const model = this.genAI.getGenerativeModel({
       model: this.modelName,
       systemInstruction: systemPrompt,
+      generationConfig: {
+        maxOutputTokens: 8192,
+        ...(options?.json ? { responseMimeType: "application/json" } : {}),
+      },
     });
     const result = await model.generateContent(userPrompt);
     return result.response.text();
