@@ -58,17 +58,25 @@ DevLeveler aggregates these isolated data points into a unified **Developer Inte
 
 ## 3. Product Highlights
 
+![DevLeveler Dashboard Overview](stitch_reference/devleveler_overview/screen.png)
+
 ### Developer Intelligence Engine
 Combines GitHub activity, resume data, project audits, and self-reported skills into a composite Developer Score. It generates a 5-axis capability radar (GitHub, Project, Skill, Resume, Deployment) alongside primary strengths and tactical gaps.
+
+![Developer Intelligence Synthesis](stitch_reference/developer_intelligence/screen.png)
 
 ### GitHub Intelligence
 Fetches public repository telemetry via GitHub API integrations. It calculates commit activity scores, repository health metrics, star/fork ratios, and language distribution graphs without blocking sign-in flows.
 
+![GitHub Intelligence Telemetry](stitch_reference/github_intelligence/screen.png)
+
 ### Resume Intelligence
 Parses uploaded resumes (`pdf-parse`), extracts structural sections (education, experience, skills, projects), and evaluates hiring manager readability alongside ATS keyword matching against market standards.
 
-### Career Roadmap Sprints
+### Career Roadmap & Readiness Matrix
 Translates identified skill gaps into time-bound weekly learning objectives, recommended toolchains, and hands-on project ideas designed to elevate developer scores.
+
+![Career Readiness and Skill Matrix](stitch_reference/readiness_skills/screen.png)
 
 ### AI Career Coach
 An interactive chat interface backed by the unified AI layer, configured to provide contextual architectural advice, interview strategy, and technical mentorship.
