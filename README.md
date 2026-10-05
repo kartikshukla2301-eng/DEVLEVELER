@@ -39,12 +39,6 @@ DevLeveler closes that gap. It ingests GitHub telemetry, parses resumes for ATS 
   <img src="docs/screenshots/features.png" width="920" alt="DevLeveler — Problems & Solutions" />
 </div>
 
-<br />
-
-<div align="center">
-  <img src="docs/screenshots/login.png" width="640" alt="DevLeveler — Sign In" />
-</div>
-
 ---
 
 ## Features
