@@ -1,194 +1,292 @@
-<div align="center">
-
-<img src="public/devleveler-logo.png" alt="DevLeveler Logo" width="80" height="80" />
-
 # DevLeveler
 
-### AI-powered developer growth & career intelligence platform.
+> AI-powered developer intelligence platform for understanding where you are, what you're missing, and what to build next.
 
-DevLeveler aggregates code activity, resume data, and project telemetry into an actionable engineering profile. It benchmarks developer capabilities, identifies technical gaps, and builds customized career roadmaps.
-
-[GitHub Repository](https://github.com/kartikshukla2301-eng/DEVLEVELER) · [Report Bug](https://github.com/kartikshukla2301-eng/DEVLEVELER/issues) · [Request Feature](https://github.com/kartikshukla2301-eng/DEVLEVELER/issues)
-
-<br />
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Next.js](https://img.shields.io/badge/Next.js-15.5-black?logo=next.js)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19.1-blue?logo=react)](https://react.dev/)
+[![Next.js](https://img.shields.io/badge/Next.js-15.5.19-black?logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.1.0-blue?logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?logo=tailwindcss)](https://tailwindcss.com/)
-[![Prisma](https://img.shields.io/badge/Prisma-6.19-2D3748?logo=prisma)](https://www.prisma.io/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-336791?logo=postgresql)](https://neon.tech/)
+[![Prisma](https://img.shields.io/badge/Prisma-6.19.3-2D3748?logo=prisma)](https://www.prisma.io/)
+[![Auth.js](https://img.shields.io/badge/Auth.js-v5.0.0--beta.31-purple?logo=nextdotjs)](https://authjs.dev/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-</div>
-
----
-
-## Quick Snapshot
-
-| Property | Implementation |
-|---|---|
-| **Framework** | Next.js 15 (App Router, Server Actions, Turbopack) |
-| **Language** | TypeScript 5 (Strict Mode) |
-| **Styling** | Tailwind CSS v4 |
-| **Database** | PostgreSQL via Prisma ORM (Neon Serverless) |
-| **Authentication** | Auth.js / NextAuth v5 (Google, GitHub, Credentials) |
-| **AI Layer** | Multi-provider architecture (OpenRouter, OpenAI, Gemini) |
-| **License** | MIT License |
+[Live Demo](https://devleveler.vercel.app/) • [GitHub Repository](https://github.com/kartik-shukla2301-eng/DevLeveler)
 
 ---
 
-## Why DevLeveler
+## 1. Why DevLeveler
 
-> DevLeveler turns a developer's GitHub activity, resume, portfolio, projects, and skills into a single engineering-growth profile.
+Developers possess rich signals across GitHub repositories, resumes, portfolio websites, and project codebases. However, these signals remain fragmented. Hiring managers, recruiters, and developers themselves struggle to quantify true engineering capability, identify technical debt in personal projects, or determine exact skill gaps for targeted roles.
 
-- **Analyze real developer signals**: Scans public repositories, commit cadence, language usage, and architecture quality.
-- **Identify skill & readiness gaps**: Benchmarks technical competencies against target roles from Entry-Level to Staff.
-- **Generate actionable roadmaps**: Provides structured weekly milestones, suggested toolchains, and project suggestions.
-- **Track growth with telemetry**: Uses XP progression, unlockable achievements, and synthesized intelligence reports.
+DevLeveler aggregates these isolated data points into a unified **Developer Intelligence Layer**, translating raw telemetry into quantified scoring, role readiness metrics, and tailored growth roadmaps.
 
----
-
-## Product Preview
-
-<p align="center">
-  <img src="stitch_reference/devleveler_overview/screen.png" alt="DevLeveler Dashboard Overview" width="100%">
-  <em>Dashboard Overview — High-level telemetry, Developer Score, and real-time activity</em>
-</p>
-
-<br />
-
-<p align="center">
-  <img src="stitch_reference/developer_intelligence/screen.png" alt="Developer Intelligence Engine" width="100%">
-  <em>Developer Intelligence — 6-node synthesis pipeline and 5-vector capability radar</em>
-</p>
-
-<br />
-
-<p align="center">
-  <img src="stitch_reference/github_intelligence/screen.png" alt="GitHub Intelligence" width="100%">
-  <em>GitHub Intelligence — Commit cadence, repository telemetry, and language distribution</em>
-</p>
-
-<br />
-
-<p align="center">
-  <img src="stitch_reference/readiness_skills/screen.png" alt="Readiness and Skills Matrix" width="100%">
-  <em>Readiness & Skills — Role-targeted readiness indices, skill gaps, and roadmap sprints</em>
-</p>
-
----
-
-## Core Features
-
-### Developer Intelligence
-- **Developer Scoring**: Multi-metric evaluation combining code velocity, repo health, and technical breadth.
-- **Skill-Gap Analysis**: Identifies missing libraries, patterns, and concepts required for target roles.
-- **Role Readiness**: Quantified readiness scores across Frontend, Backend, Full-Stack, and Graduate levels.
-- **Engineering Insights**: Synthesized dossier highlighting primary strengths and tactical gaps.
-
-### Code & Project Intelligence
-- **GitHub Repository Analysis**: Audits repository health, license compliance, star counts, and forks.
-- **Commit & Activity Insights**: Visual velocity grid tracking contribution consistency over time.
-- **Project Architecture Auditing**: Inspects documentation completeness, scalability, and code structure.
-- **Language Breakdown**: Polyglot distribution analysis across all synced public repositories.
-
-### Career Intelligence
-- **AI Career Coach**: Interactive conversational advisor for guidance on career transitions and architectural decisions.
-- **Career Roadmap Generator**: Tailored weekly and monthly milestones based on identified gaps.
-- **Interview Preparation**: Role-focused technical, HR, and scenario questions with feedback.
-- **Resume ATS Analysis**: Parses uploaded resumes for keyword gaps, structure flaws, and hiring-manager signals.
-- **Portfolio Website Audit**: Evaluates personal portfolio URLs for mobile responsiveness, performance, and design clarity.
-
-### Progress & Profiles
-- **XP & Leveling System**: Earn experience points for completing analyses, syncing repos, and improving scores.
-- **Achievement Badges**: Commemorates career milestones like first code audit, ATS optimization, and high GitHub scores.
-- **Public Profiles (`/u/[username]`)**: Shareable developer card displaying verified scores, metrics, and top repos.
-- **Admin & Recruiter Portals**: Dedicated talent discovery filtering by score and skill alongside system-wide telemetry.
-
----
-
-## Tech Stack
-
-| Layer | Stack |
-|---|---|
-| **Frontend** | Next.js 15, React 19, TypeScript |
-| **Styling** | Tailwind CSS v4 |
-| **Backend** | Next.js Server Actions & Route Handlers |
-| **Database** | PostgreSQL (Neon Serverless) |
-| **ORM** | Prisma v6 |
-| **Authentication** | Auth.js / NextAuth v5 (OAuth & Credentials) |
-| **AI Engine** | OpenRouter (default), OpenAI, and Google Gemini |
-| **Schema Validation** | Zod v4 |
-| **Data Visualization** | Recharts |
-| **Animation** | Motion |
-
----
-
-## Architecture
-
-```mermaid
-flowchart TD
-    User([Developer / Recruiter]) --> NextJS[Next.js App Router]
-    NextJS --> Actions[Server Actions / Route Handlers]
-    Actions --> Services[Business Logic & Telemetry Layer]
-    Services --> AI[AI Provider Abstraction]
-    Services --> Prisma[Prisma ORM Client]
-    Prisma --> DB[(PostgreSQL on Neon)]
-    AI --> Providers[OpenRouter / OpenAI / Gemini]
+```
+  GitHub Activity
+        +
+   Resume Data
+        +
+ Portfolio Audits   ──►  Developer Intelligence  ──►  Developer Score + Skill Gaps
+        +                       Engine                + Role Readiness + Roadmap
+  Project Audits
+        +
+ Technical Skills
 ```
 
-### Decoupled AI Layer
-DevLeveler separates feature logic from AI model APIs. A unified facade (`src/lib/ai`) resolves the configured provider at runtime via `AI_PROVIDER`, allowing seamless switching between OpenRouter, OpenAI, and Gemini without modifying business actions.
+---
+
+## 2. What It Does
+
+| Feature | What It Does |
+|---|---|
+| **Developer Intelligence** | Synthesizes multi-source telemetry into a 5-vector evaluation score (0-100) and capability analysis. |
+| **GitHub Intelligence** | Analyzes public repository health, commit velocity, star counts, fork ratios, and polyglot language breakdown. |
+| **Resume / ATS Analysis** | Parses PDF/text resumes to extract skills, calculate ATS compatibility, and identify missing technical keywords. |
+| **Portfolio Audit** | Evaluates personal portfolio URLs for mobile responsiveness, performance, design clarity, and accessibility. |
+| **Project Analysis** | Performs repository architectural code audits, scoring maintainability, documentation, and folder structure. |
+| **Skill Gap Analysis** | Compares current developer competencies against target engineering roles to highlight missing stack requirements. |
+| **Career Readiness** | Calculates quantified readiness indices for Entry-Level, Graduate, Full-Stack, Frontend, and Backend positions. |
+| **Personalized Roadmap** | Generates structured weekly and monthly milestone sprints alongside tailored project concepts. |
+| **Interview Preparation** | Conducts simulated technical, HR, and project-based interview drills with automated answer evaluation. |
+| **AI Career Coach** | Provides an interactive conversational guide for career transitions, code reviews, and architectural decisions. |
+| **XP & Achievements** | Gamifies developer growth by awarding XP and unlockable badges for telemetry syncs and score milestones. |
+| **Public Developer Profiles** | Generates shareable developer cards (`/u/[username]`) displaying verified scores, metrics, and top repositories. |
+| **Notifications System** | Delivers real-time in-app alerts for score changes, roadmap progress, and unlocked achievements. |
+| **Recruiter Portal** | Enables recruiters to search and filter developers by score tiers, verified skill sets, and role readiness. |
+| **Admin Portal** | Displays system-wide telemetry, user activity metrics, registered accounts, and AI usage statistics. |
 
 ---
 
-## Project Structure
+## 3. Product Highlights
+
+### Developer Intelligence Engine
+Combines GitHub activity, resume data, project audits, and self-reported skills into a composite Developer Score. It generates a 5-axis capability radar (GitHub, Project, Skill, Resume, Deployment) alongside primary strengths and tactical gaps.
+
+### GitHub Intelligence
+Fetches public repository telemetry via GitHub API integrations. It calculates commit activity scores, repository health metrics, star/fork ratios, and language distribution graphs without blocking sign-in flows.
+
+### Resume Intelligence
+Parses uploaded resumes (`pdf-parse`), extracts structural sections (education, experience, skills, projects), and evaluates hiring manager readability alongside ATS keyword matching against market standards.
+
+### Career Roadmap Sprints
+Translates identified skill gaps into time-bound weekly learning objectives, recommended toolchains, and hands-on project ideas designed to elevate developer scores.
+
+### AI Career Coach
+An interactive chat interface backed by the unified AI layer, configured to provide contextual architectural advice, interview strategy, and technical mentorship.
+
+---
+
+## 4. Tech Stack
+
+| Layer | Technology | Purpose / Notes |
+|---|---|---|
+| **Framework** | Next.js `15.5.19` | App Router, Server Actions, Route Handlers, Turbopack |
+| **UI Library** | React `19.1.0` | React 19 Concurrent features, Server Components |
+| **Language** | TypeScript `5.x` | Strict type safety across client, server, and database |
+| **Styling** | Tailwind CSS `4.0` | Modern CSS styling and utility classes |
+| **Database** | PostgreSQL + Neon | Serverless relational database hosting |
+| **ORM** | Prisma `6.19.3` | Schema definition, migrations, type-safe database queries |
+| **Authentication** | Auth.js `v5.0.0-beta.31` | Google OAuth, GitHub OAuth, Credentials provider, JWT sessions |
+| **Adapter** | `@auth/prisma-adapter` `2.11.2` | Database persistence adapter for Auth.js sessions and accounts |
+| **AI Layer** | Multi-Provider Engine | Unified provider facade supporting OpenRouter, OpenAI, and Gemini |
+| **Validation** | Zod `4.4.3` | Strict runtime input validation for server actions and env |
+| **Visualization** | Recharts `3.8.1` | Interactive telemetry graphs, radar charts, and score trends |
+| **Animations** | Motion `12.40.0` | Smooth UI transitions and interactive visual effects |
+| **PDF Parser** | `pdf-parse` `2.4.5` | Server-side text extraction from uploaded resume PDFs |
+| **Security & Utilities** | `bcryptjs` `3.0.3` | Password hashing for credentials-based authentication |
+
+---
+
+## 5. Architecture
+
+```
+                               Browser Client
+                                     │
+                                     ▼
+                            Next.js App Router
+                                     │
+             ┌───────────────────────┼───────────────────────┐
+             ▼                       ▼                       ▼
+      Server Components       Client Components       Server Actions
+             │                       │                       │
+             └───────────────────────┼───────────────────────┘
+                                     │
+                                     ▼
+                            Business Logic Layer
+                           (Rate Limiting & Zod)
+                                     │
+             ┌───────────────────────┴───────────────────────┐
+             ▼                                               ▼
+         Prisma ORM                                      AI Engine
+             │                                        (Provider Facade)
+             ▼                                               │
+    PostgreSQL (Neon)                                 ┌──────┼──────┐
+                                                      ▼      ▼      ▼
+                                                   Gemini  OpenAI OpenRouter
+```
+
+### Edge-Safe Auth.js v5 Architecture
+To optimize cold-start latency and keep Edge runtime bundles lightweight, DevLeveler decouples Auth.js configuration across three files:
+
+1. **`src/auth.config.ts`**: Contains lightweight, Edge-compatible callbacks, page definitions, and JWT session strategies. Imports no Node.js dependencies, Prisma, or bcrypt.
+2. **`src/auth.ts`**: Executes solely in the Node.js server environment. Extends `authConfig` with Prisma database adapters, bcrypt credential authorization, and non-blocking background GitHub syncs.
+3. **`src/middleware.ts`**: Mounts `authConfig` onto Next.js middleware for instant, low-latency route protection (`/dashboard/*`) on the Edge.
+
+---
+
+## 6. AI Architecture
+
+DevLeveler decouples application business logic from specific AI provider SDKs using a unified provider facade (`src/lib/ai`).
+
+```
+ Server Action / Feature
+            │
+            ▼
+   ai() Abstraction Facade (src/lib/ai/index.ts)
+            │
+            ▼
+   Provider Registry (Gemini / OpenAI / OpenRouter)
+            │
+            ▼
+ executeWithObservabilityAndCache()
+            │
+    ┌───────┴────────┐
+    ▼                ▼
+Cache Hit?      Cache Miss?
+    │                │
+    ├─► Return       ├─► Call Provider API
+    │   Cached       │          │
+    │   Response     │          ▼
+    │                ├─► Log Token & Cost (AIUsageLog)
+    │                │          │
+    │                ├─► Persist to Cache (AICache)
+    │                │          │
+    └────────────────┴─► Return Parsed & Validated Result
+```
+
+Features request AI completion through `ai().generateContent()`. The abstraction routes requests to the configured provider (`AI_PROVIDER`), executes standard retry wrappers, parses JSON payloads using strict fallback extractors, and returns strongly-typed results.
+
+---
+
+## 7. AI Cost & Caching
+
+To prevent unnecessary API spend and maintain sub-second response times for identical analyses, DevLeveler incorporates an **Observability & Smart Caching Layer**.
+
+### Caching Mechanism (`AICache`)
+- **Deterministic Key Generation**: Hashes request params (`feature`, `provider`, `model`, `userId`, `promptVersion`, `context`) using SHA-256 (`src/lib/ai/cache.ts`).
+- **Two-Tier Cache Strategy**: Combines a fast in-memory Map for hot process reads with persistent PostgreSQL storage via Prisma (`AICache`).
+- **Feature-Specific TTLs**:
+  - `ROADMAP`: 7 Days
+  - `RESUME`: 7 Days
+  - `SKILL_GAP`: 3 Days
+  - `PORTFOLIO`: 3 Days
+  - `READINESS`: 24 Hours
+  - `INTERVIEW`: 24 Hours
+
+### Observability & Cost Accounting (`AIUsageLog`)
+Every external AI call logs precise metrics into PostgreSQL:
+- Input/output token usage & estimated cost calculation (`src/lib/ai/pricing.ts`).
+- Execution latency in milliseconds (`latencyMs`).
+- Latency status (`SUCCESS` / `FAILED`) and error codes.
+- Cache hit tracking (`cacheHit`) and monetary savings calculated per request (`costSaved`).
+
+---
+
+## 8. Database Architecture
+
+DevLeveler utilizes **PostgreSQL hosted on Neon** paired with **Prisma ORM**. Authorization is enforced at the application level inside Server Actions and API routes.
+
+```
+┌───────────────────┐       ┌───────────────────┐       ┌───────────────────┐
+│       User        │───────│   Account/Session │───────│   GitHubProfile   │
+└───────────────────┘       └───────────────────┘       └───────────────────┘
+          │                           │                           │
+          ├───► Resume                ├───► PortfolioAnalysis     ├───► ProjectAnalysis
+          ├───► DeveloperScore        ├───► InterviewSession      ├───► SkillGap
+          ├───► ReadinessAnalysis     ├───► Roadmap               ├───► Notification
+          ├───► DeveloperIntelReport  ├───► UserAchievement       ├───► XPHistory
+          └───► AIUsageLog            └───► AICache               └───► LinkedInAnalysis
+```
+
+### Primary Data Domains
+- **Identity & Auth**: `User`, `Account`, `Session`, `VerificationToken`
+- **Developer Telemetry**: `GitHubProfile`, `Resume`, `PortfolioAnalysis`, `ProjectAnalysis`, `LinkedInAnalysis`
+- **Intelligence & Scoring**: `DeveloperScore`, `ScoreHistory`, `SkillGap`, `ReadinessAnalysis`, `DeveloperIntelligenceReport`
+- **Growth & Guidance**: `Roadmap`, `InterviewSession`, `UserAchievement`, `XPHistory`, `Notification`
+- **AI Infrastructure**: `AIUsageLog`, `AICache`
+
+---
+
+## 9. Security & Reliability
+
+- **Authentication Guards**: Route protection via Edge middleware (`/dashboard/*`) combined with server-side session checks in Server Actions.
+- **Input Validation**: Strict runtime schema parsing using `zod` across all forms, actions, and environment variables.
+- **Sliding-Window Rate Limiting**: In-memory rate limiter (`src/lib/rate-limit.ts`) enforcing limits across AI actions (5/hr), code analyses (3/hr), auth attempts (5/15m), and profile updates (10/hr).
+- **Prompt Injection Defense**: Input sanitizer (`sanitizeForAI`) strips system command prefixes, code block tokens, and limits prompt text length to 5,000 characters.
+- **Sanitization Utilities**: `sanitizeText` strips HTML/Script tags, and `sanitizeUrl` enforces strict `http:`/`https:` protocols to prevent XSS and SSRF.
+- **Duplicate Submission Protection**: Memory-backed cooldown tracker prevents repeated rapid server action triggers.
+- **Typed Error Handling**: Centralized `safeErrorMessage` prevents internal system tracebacks or database errors from exposing to the client.
+
+---
+
+## 10. Performance Optimizations
+
+- **React 19 Server Components**: Renders heavy data layouts server-side, shipping minimal JavaScript to the client.
+- **Targeted Prisma Selects**: Queries extract only required column fields, minimizing database payload overhead.
+- **Asynchronous Non-Blocking Tasks**: GitHub profile imports trigger asynchronously during OAuth login, redirecting the user immediately without waiting for API syncs.
+- **Dual-Tier Response Caching**: In-memory fast tier bypasses DB calls for hot repetitive AI requests.
+- **Lightweight Middleware**: Auth middleware executes without loading Prisma or Node-native packages on Edge routers.
+- **Client Component Memoization**: React components (`React.memo`) isolate re-renders during high-frequency UI state changes.
+
+---
+
+## 11. Project Structure
 
 ```
 DevLeveler/
 ├── prisma/
-│   ├── schema.prisma         # Relational database schema (19 models)
-│   └── seed.ts               # Database seed script for development
-├── public/                   # Static branding, logo, and sample assets
+│   └── schema.prisma         # Relational database models (19 models)
+├── public/                   # Static branding assets and images
 ├── src/
-│   ├── actions/              # Next.js Server Actions (score, resume, roadmap, etc.)
-│   ├── app/                  # App Router pages and API routes
-│   │   ├── (auth)/           # Authentication pages (login, signup, reset)
-│   │   ├── (dashboard)/      # Protected dashboard routes
-│   │   │   └── dashboard/    # Intelligence, GitHub, Readiness, Coach, etc.
-│   │   ├── api/auth/         # NextAuth handler routes
-│   │   └── u/[username]/     # Public profile route
-│   ├── components/           # UI components (dashboard, landing, primitives)
-│   ├── lib/                  # Shared utilities and services
-│   │   ├── ai/               # AI provider abstraction & prompt caching
-│   │   ├── github.ts         # GitHub API client
+│   ├── actions/              # Server Actions (auth, score, resume, roadmap, etc.)
+│   ├── app/                  # Next.js App Router (pages, layouts, API routes)
+│   │   ├── (auth)/           # Authentication routes (/login, /signup)
+│   │   ├── (dashboard)/      # Protected dashboard routes (/dashboard/*)
+│   │   ├── api/              # Route Handlers (/api/auth/*)
+│   │   └── u/[username]/     # Shareable public developer profiles
+│   ├── components/           # Modular UI components (dashboard, landing, ui)
+│   ├── lib/                  # Core services & utilities
+│   │   ├── ai/               # Unified AI engine, provider registry, caching, observability
+│   │   ├── env.ts            # Environment variable validation schema
+│   │   ├── github.ts         # GitHub API client & telemetry extractor
 │   │   ├── prisma.ts         # Global Prisma client singleton
-│   │   ├── rate-limit.ts     # In-memory sliding window rate limiter
-│   │   └── xp.ts             # Experience points and leveling logic
-│   ├── types/                # TypeScript interface and type definitions
-│   ├── auth.ts               # Auth.js configuration and callbacks
-│   └── middleware.ts         # Session verification and route protection
-├── .env.example              # Environment variables template
-├── next.config.ts            # Next.js configuration
-└── package.json              # Dependencies and scripts
+│   │   ├── rate-limit.ts     # Sliding window rate limiter
+│   │   ├── security.ts       # Text/URL sanitization & prompt protection
+│   │   └── xp.ts             # Gamification XP algorithms & leveling logic
+│   ├── types/                # Shared TypeScript definitions
+│   ├── auth.config.ts        # Lightweight Edge-safe Auth.js config
+│   ├── auth.ts               # Complete Node.js Auth.js initialization
+│   └── middleware.ts         # Edge route protection middleware
+├── .env.example              # Template for local environment variables
+├── next.config.ts            # Next.js configuration settings
+├── package.json              # Project dependencies and scripts
+└── README.md                 # Project documentation
 ```
 
 ---
 
-## Getting Started
+## 12. Local Development
 
 ### Prerequisites
 - Node.js `20.x` or higher
 - npm `10.x` or higher
-- A PostgreSQL connection string (e.g. from [Neon](https://neon.tech))
+- PostgreSQL instance (e.g. [Neon Serverless PostgreSQL](https://neon.tech))
 
-### Installation
+### Installation & Setup
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/kartikshukla2301-eng/DEVLEVELER.git
-   cd DEVLEVELER
+   git clone https://github.com/kartik-shukla2301-eng/DevLeveler.git
+   cd DevLeveler
    ```
 
 2. **Install dependencies**:
@@ -200,25 +298,25 @@ DevLeveler/
    ```bash
    cp .env.example .env.local
    ```
-   Fill in your PostgreSQL connection string, `AUTH_SECRET`, OAuth credentials, and AI API keys in `.env.local`.
+   *Fill in required credentials inside `.env.local`.*
 
-4. **Sync database schema**:
+4. **Synchronize database schema**:
    ```bash
    npx prisma db push
    ```
 
-5. **Run development server**:
+5. **Start the development server**:
    ```bash
    npm run dev
    ```
    Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### Quality Checks
+### Verification Commands
 ```bash
-# Type check TypeScript files
+# Type check TypeScript codebase
 npx tsc --noEmit
 
-# Run linter
+# Run ESLint check
 npm run lint
 
 # Build production bundle
@@ -227,87 +325,104 @@ npm run build
 
 ---
 
-## Environment Variables
+## 13. Environment Variables
 
 | Variable | Required | Purpose |
 |---|:---:|---|
-| `DATABASE_URL` | Yes | PostgreSQL connection string |
-| `DIRECT_URL` | Optional | Direct connection string for schema migrations |
-| `AUTH_SECRET` | Yes | Encryption secret for Auth.js session tokens |
-| `AUTH_GOOGLE_ID` | Yes | Google OAuth Client ID |
-| `AUTH_GOOGLE_SECRET` | Yes | Google OAuth Client Secret |
-| `AI_PROVIDER` | Yes | Active AI provider (`openrouter`, `openai`, or `gemini`) |
-| `OPENROUTER_API_KEY` | Optional | API key when using OpenRouter |
-| `OPENAI_API_KEY` | Optional | API key when using OpenAI |
-| `GEMINI_API_KEY` | Optional | API key when using Google Gemini |
-| `AI_MODEL` | Optional | Model override (e.g., `meta-llama/llama-3.3-70b-instruct`) |
-| `GITHUB_TOKEN` | Optional | Increases public GitHub API rate limits |
-| `NEXT_PUBLIC_APP_URL` | Yes | Base application URL (default: `http://localhost:3000`) |
+| `DATABASE_URL` | **Yes** | PostgreSQL connection URL |
+| `DIRECT_URL` | Optional | Direct PostgreSQL URL for Prisma migrations |
+| `AUTH_SECRET` | **Yes** | Auth.js secret key for session encryption |
+| `AUTH_GOOGLE_ID` | **Yes** | Google OAuth Client ID |
+| `AUTH_GOOGLE_SECRET` | **Yes** | Google OAuth Client Secret |
+| `GEMINI_API_KEY` | Conditional* | Google Gemini API Key |
+| `OPENAI_API_KEY` | Conditional* | OpenAI API Key |
+| `OPENROUTER_API_KEY` | Conditional* | OpenRouter API Key |
+| `AI_PROVIDER` | Optional | Active AI provider (`gemini`, `openai`, `openrouter`) |
+| `AI_MODEL` | Optional | Specific model override |
+| `GITHUB_TOKEN` | Optional | Personal access token for higher GitHub API rate limits |
+| `NEXT_PUBLIC_APP_URL` | **Yes** | Application base URL (default: `http://localhost:3000`) |
+
+*\* At least one AI provider API key (`GEMINI_API_KEY`, `OPENAI_API_KEY`, or `OPENROUTER_API_KEY`) is required.*
 
 ---
 
-## Membership Tiers
+## 14. Authentication
 
-| Tier | Price | Access |
+DevLeveler implements **Auth.js v5** using JWT session strategies.
+
+### Supported Authentication Methods
+1. **Google OAuth**: One-click social sign-in.
+2. **GitHub OAuth**: Social sign-in with automatic background telemetry import.
+3. **Credentials**: Email and password registration with `bcryptjs` password hashing (8+ chars, letter and number required).
+
+### Production Callback URLs
+When deploying to production, register these callback URLs in your OAuth app settings:
+- Google OAuth: `https://devleveler.vercel.app/api/auth/callback/google`
+- GitHub OAuth: `https://devleveler.vercel.app/api/auth/callback/github`
+
+---
+
+## 15. Deployment
+
+DevLeveler is configured for seamless deployment on **Vercel** connected to **Neon PostgreSQL**.
+
+- **Production URL**: [https://devleveler.vercel.app/](https://devleveler.vercel.app/)
+- **Hosting Platform**: Vercel App Router Serverless Functions
+- **Database**: Neon Serverless PostgreSQL
+
+Ensure all environment variables listed in Section 13 are configured in your Vercel Project Settings prior to deployment.
+
+---
+
+## 16. Pricing
+
+| Tier | Price | Features |
 |---|---|---|
-| **Free** | $0 | Standard developer score, GitHub sync, 1 resume audit, 1 roadmap, 1 project analysis, and 1 portfolio analysis. |
-| **Pro** | $3 / 6 Months | Unlimited AI coaching, unlimited resume scans, deep intelligence reports, priority recruiter visibility, and custom themes. |
-| **Founding Developer** | Free Lifetime Pro | Automatically granted to the first 5 registered accounts on the platform. |
+| **Free** | `$0` | Standard Developer Score, GitHub sync, basic resume & portfolio analysis, basic roadmap, XP & achievements. |
+| **Pro** | `$3` / 6 Months | Unlimited AI analysis, AI Career Coach, AI Career Roadmaps, AI Interview Prep, advanced intelligence reports, premium themes. |
+| **Early Adopter Program** | **Free Pro** | First 5 registered accounts receive 6 months of Pro access automatically. |
 
 ---
 
-## Security & Reliability
+## 17. Engineering Roadmap
 
-- **Session Security**: Session tokens handled via JWT with secure cookie flags and bcrypt password hashing.
-- **Role-Based Guards**: Protected routes enforced at both the middleware and server-component layout layers.
-- **In-Memory Rate Limiting**: Sliding window rate limiter protects AI generation and authentication endpoints.
-- **Strict Validation**: All incoming requests and environment variables validated through Zod schemas.
-- **Error Containment**: Isolated React Error Boundaries prevent application-wide crashes on network or AI errors.
-- **AI Response Sanitization**: Robust JSON extraction handles non-standard model responses gracefully.
-
----
-
-## Roadmap
-
-- [x] Next.js 15 App Router architecture with PostgreSQL and Prisma
-- [x] Multi-provider AI engine (OpenRouter, OpenAI, Gemini)
-- [x] GitHub telemetry ingestion, ATS resume parser, and portfolio auditor
-- [x] Developer score calculation and skill-gap synthesis
-- [x] Gamified XP system, achievements, and public profile routes
-- [x] Recruiter and Admin portals
-- [ ] Email notification service for weekly progress digests
+- [ ] Automated end-to-end testing suite (Playwright / Vitest)
+- [ ] Automated CI/CD workflow pipeline via GitHub Actions
+- [ ] Dedicated email notification service integration (Resend / SendGrid)
 - [ ] Automated payment gateway integration (Stripe / Razorpay)
-- [ ] Automated E2E test suite (Playwright)
+- [ ] Advanced AI cost analytics & exportable developer intelligence PDFs
 
 ---
 
-## Contributing
+## 18. Engineering Highlights
 
-1. Fork the repository.
-2. Create a feature branch (`git checkout -b feature/your-feature`).
-3. Commit your changes (`git commit -m "feat: your feature description"`).
-4. Verify tests and linting (`npm run lint && npx tsc --noEmit`).
-5. Push to the branch (`git push origin feature/your-feature`).
-6. Open a Pull Request.
-
----
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
+1. **Provider-Agnostic AI Architecture**: Abstracted provider facade allows swapping between Gemini, OpenAI, and OpenRouter without changing business actions.
+2. **Edge-Safe Auth Middleware Split**: Separating auth configuration keeps the Edge middleware bundle small while running Prisma and bcrypt securely in Node runtime.
+3. **Two-Tier Response Caching**: In-memory fast tier combined with PostgreSQL persistence minimizes duplicate AI calls and lowers API spend.
+4. **Non-Blocking Telemetry Synchronization**: Asynchronous processing allows GitHub profile imports to run in the background without delaying user login redirects.
+5. **Observability & Spend Accounting**: Logs detailed token usage, latencies, and dollar costs per operation into PostgreSQL.
+6. **Defense-in-Depth Security**: Combines sliding-window rate limiting, text sanitization, prompt injection stripping, and typed server action returns.
 
 ---
 
-## Author
+## 19. Contributing
+
+1. **Fork** the repository.
+2. **Create** a feature branch (`git checkout -b feature/amazing-feature`).
+3. **Commit** your changes (`git commit -m "feat: add amazing feature"`).
+4. **Verify** types, linting, and build (`npx tsc --noEmit && npm run lint && npm run build`).
+5. **Open** a Pull Request against `main`.
+
+---
+
+## 20. License & Author
+
+Distributed under the **MIT License**. See `LICENSE` for details.
 
 **Kartik Shukla**  
-B.Tech Computer Science & Engineering  
+*B.Tech Computer Science & Engineering*
 
-[GitHub](https://github.com/kartikshukla2301-eng) · [LinkedIn](https://www.linkedin.com/in/kartik-shukla-cse) · [Portfolio](https://kartik-portfolio-chi-eight.vercel.app) · [Email](mailto:kartikshukla2301@gmail.com)
-
----
-
-<div align="center">
-Built with Next.js, TypeScript, Prisma and AI.<br />
-© 2026 Kartik Shukla
-</div>
+- **GitHub**: [github.com/kartik-shukla2301-eng](https://github.com/kartik-shukla2301-eng)
+- **LinkedIn**: [linkedin.com/in/kartik-shukla-cse](https://www.linkedin.com/in/kartik-shukla-cse)
+- **Portfolio**: [kartik-portfolio-chi-eight.vercel.app](https://kartik-portfolio-chi-eight.vercel.app)
+- **Email**: [kartikshukla2301@gmail.com](mailto:kartikshukla2301@gmail.com)
