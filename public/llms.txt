@@ -1,0 +1,20 @@
+# DevLeveler
+
+> AI-Powered Developer Intelligence Platform
+
+DevLeveler is a web platform for software engineers, students, and job seekers that evaluates technical proof-of-work across public code repositories, resume keyword alignment, and project architecture to calculate an objective Developer Score and recommend personalized learning milestones.
+
+## Verified Capabilities
+- Developer Score: Calculates a 0-100 composite score based on projects and code quality, GitHub activity volume, skill balance, ATS resume compliance, and deployment preparation.
+- GitHub Telemetry Analysis: Audits repository structure, commit patterns, language distributions, and repository hygiene.
+- ATS Resume Optimizer: Parses resume keywords and technical terminology to check compliance against software engineering hiring standards.
+- Personalized Career Roadmap: Generates weekly milestones and targeted skill targets calibrated for frontend, backend, fullstack, and devops engineering roles.
+- Public Verification Profiles: Provides shareable public developer portfolios with verified achievements and score breakdowns.
+
+## Public Canonical URLs
+- Homepage: https://devleveler.vercel.app/
+- Sign In: https://devleveler.vercel.app/login
+- Sign Up: https://devleveler.vercel.app/signup
+
+## Creator
+- Developed by Kartik Shukla (https://github.com/kartikshukla2301-eng)
