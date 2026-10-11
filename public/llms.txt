@@ -2,19 +2,34 @@
 
 > AI-Powered Developer Intelligence Platform
 
-DevLeveler is a web platform for software engineers, students, and job seekers that evaluates technical proof-of-work across public code repositories, resume keyword alignment, and project architecture to calculate an objective Developer Score and recommend personalized learning milestones.
+DevLeveler evaluates technical proof-of-work across public code repositories, resume keyword alignment, and project architecture to calculate an objective Developer Score, diagnose skill gaps against market demands, and recommend personalized 12-week learning milestones.
 
-## Verified Capabilities
-- Developer Score: Calculates a 0-100 composite score based on projects and code quality, GitHub activity volume, skill balance, ATS resume compliance, and deployment preparation.
-- GitHub Telemetry Analysis: Audits repository structure, commit patterns, language distributions, and repository hygiene.
-- ATS Resume Optimizer: Parses resume keywords and technical terminology to check compliance against software engineering hiring standards.
-- Personalized Career Roadmap: Generates weekly milestones and targeted skill targets calibrated for frontend, backend, fullstack, and devops engineering roles.
-- Public Verification Profiles: Provides shareable public developer portfolios with verified achievements and score breakdowns.
+## Verified Core Capabilities
+- Developer Score: Calculates a 0-100 composite score based on projects and code quality (30%), GitHub activity volume (25%), skill balance (20%), ATS resume compliance (15%), and deployment preparation (10%).
+- GitHub Telemetry Analysis: Audits repository structure, commit consistency, language distribution, and code hygiene without requiring write access.
+- ATS Resume Optimizer: Parses PDF resumes for automated OCR and ATS keyword compatibility against software engineering hiring standards.
+- Skill Gap Diagnostics: Compares demonstrated tech stack against live market benchmarks to spotlight missing tools and architectural competencies.
+- Personalized Career Roadmap: Generates ordered 12-week milestone curricula tailored to target engineering tracks (Frontend, Backend, Fullstack, DevOps).
+- Developer Portfolio Audit: Evaluates portfolio websites for performance, mobile responsiveness, accessibility, and live demo proof-of-work.
 
-## Public Canonical URLs
+## Canonical Public URLs
 - Homepage: https://devleveler.vercel.app/
+- How It Works & Methodology: https://devleveler.vercel.app/how-it-works
+- GitHub Analysis Feature: https://devleveler.vercel.app/features/github-analysis
+- ATS Resume Analysis Feature: https://devleveler.vercel.app/features/ats-resume-analysis
+- Skill Gap Analysis Feature: https://devleveler.vercel.app/features/skill-gap-analysis
+- Developer Roadmap Feature: https://devleveler.vercel.app/features/developer-roadmap
+- Portfolio Analysis Feature: https://devleveler.vercel.app/features/portfolio-analysis
+
+## Technical Guides
+- Guide: How to Analyze Your GitHub Profile: https://devleveler.vercel.app/guides/analyze-github-profile
+- Guide: Optimize Software Engineer Resume for ATS: https://devleveler.vercel.app/guides/improve-software-engineer-resume
+- Guide: Identify Programming Skill Gaps: https://devleveler.vercel.app/guides/identify-programming-skill-gaps
+- Guide: Build a 12-Week Learning Roadmap: https://devleveler.vercel.app/guides/build-a-software-engineering-learning-roadmap
+
+## Sign In & Registration
 - Sign In: https://devleveler.vercel.app/login
 - Sign Up: https://devleveler.vercel.app/signup
 
-## Creator
-- Developed by Kartik Shukla (https://github.com/kartikshukla2301-eng)
+## Creator & Attribution
+- Developed by Kartik Shukla (https://github.com/kartikshukla2301-eng)(https://www.linkedin.com/in/kartik-shukla-cse)(https://kartik-portfolio-chi-eight.vercel.app/)

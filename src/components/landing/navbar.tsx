@@ -7,11 +7,11 @@ import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "motion/react";
 
 const navLinks = [
-  { label: "About", href: "#about" },
-  { label: "Features", href: "#features" },
-  { label: "How It Works", href: "#how-it-works" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "Contact", href: "#contact" },
+  { label: "About", href: "/#about" },
+  { label: "Features", href: "/#features" },
+  { label: "How It Works", href: "/#how-it-works" },
+  { label: "Pricing", href: "/#pricing" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export function Navbar() {

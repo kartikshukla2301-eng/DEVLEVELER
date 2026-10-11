@@ -49,10 +49,10 @@ export function Footer() {
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[220px] bg-gradient-to-t from-blue-600/10 via-indigo-600/5 to-transparent rounded-full blur-[90px] pointer-events-none" />
 
       <div className="mx-auto max-w-6xl px-6 relative z-10">
-        <div className="grid gap-10 md:grid-cols-4">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
           
           {/* Logo & Tagline */}
-          <div className="space-y-4">
+          <div className="space-y-4 sm:col-span-2 lg:col-span-1">
             <Link
               href="/"
               id="footer-logo"
@@ -70,35 +70,70 @@ export function Footer() {
             </p>
           </div>
 
-          {/* Product Links */}
+          {/* Features */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200">
-              Product
+              Features
             </h4>
-            <ul className="mt-4 space-y-2.5">
+            <ul className="mt-4 space-y-2 text-xs">
               <li>
-                <a
-                  href="#about"
-                  className="text-xs text-slate-400 hover:text-white transition-colors"
-                >
-                  About Platform
-                </a>
+                <Link href="/how-it-works" className="text-slate-400 hover:text-white transition-colors">
+                  How It Works
+                </Link>
               </li>
               <li>
-                <a
-                  href="#features"
-                  className="text-xs text-slate-400 hover:text-white transition-colors"
-                >
-                  Features
-                </a>
+                <Link href="/features/github-analysis" className="text-slate-400 hover:text-white transition-colors">
+                  GitHub Analysis
+                </Link>
               </li>
               <li>
-                <a
-                  href="#pricing"
-                  className="text-xs text-slate-400 hover:text-white transition-colors"
-                >
-                  Pricing
-                </a>
+                <Link href="/features/ats-resume-analysis" className="text-slate-400 hover:text-white transition-colors">
+                  ATS Resume Audit
+                </Link>
+              </li>
+              <li>
+                <Link href="/features/skill-gap-analysis" className="text-slate-400 hover:text-white transition-colors">
+                  Skill Gap Detection
+                </Link>
+              </li>
+              <li>
+                <Link href="/features/developer-roadmap" className="text-slate-400 hover:text-white transition-colors">
+                  Career Roadmap
+                </Link>
+              </li>
+              <li>
+                <Link href="/features/portfolio-analysis" className="text-slate-400 hover:text-white transition-colors">
+                  Portfolio Audit
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Technical Guides */}
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200">
+              Career Guides
+            </h4>
+            <ul className="mt-4 space-y-2 text-xs">
+              <li>
+                <Link href="/guides/analyze-github-profile" className="text-slate-400 hover:text-white transition-colors">
+                  Analyze GitHub Profile
+                </Link>
+              </li>
+              <li>
+                <Link href="/guides/improve-software-engineer-resume" className="text-slate-400 hover:text-white transition-colors">
+                  Optimize Resume for ATS
+                </Link>
+              </li>
+              <li>
+                <Link href="/guides/identify-programming-skill-gaps" className="text-slate-400 hover:text-white transition-colors">
+                  Diagnose Skill Gaps
+                </Link>
+              </li>
+              <li>
+                <Link href="/guides/build-a-software-engineering-learning-roadmap" className="text-slate-400 hover:text-white transition-colors">
+                  Build 12-Week Roadmap
+                </Link>
               </li>
             </ul>
           </div>
@@ -108,13 +143,13 @@ export function Footer() {
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200">
               Resources
             </h4>
-            <ul className="mt-4 space-y-2.5">
+            <ul className="mt-4 space-y-2 text-xs">
               <li>
                 <a
                   href="https://github.com/kartikshukla2301-eng"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-slate-400 hover:text-white transition-colors"
+                  className="text-slate-400 hover:text-white transition-colors"
                 >
                   GitHub Profile
                 </a>
@@ -124,7 +159,7 @@ export function Footer() {
                   href="https://kartik-portfolio-chi-eight.vercel.app"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-slate-400 hover:text-white transition-colors"
+                  className="text-slate-400 hover:text-white transition-colors"
                 >
                   Developer Portfolio
                 </a>
@@ -134,40 +169,39 @@ export function Footer() {
                   href="https://www.linkedin.com/in/kartik-shukla-cse"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-slate-400 hover:text-white transition-colors"
+                  className="text-slate-400 hover:text-white transition-colors"
                 >
                   LinkedIn Directory
                 </a>
               </li>
+              <li>
+                <Link href="/#pricing" className="text-slate-400 hover:text-white transition-colors">
+                  Pricing Plans
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Company */}
+          {/* Security & Contact */}
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200">
               Security & Contact
             </h4>
-            <ul className="mt-4 space-y-2.5">
+            <ul className="mt-4 space-y-2 text-xs">
               <li>
-                <a
-                  href="#trust"
-                  className="text-xs text-slate-400 hover:text-white transition-colors"
-                >
+                <Link href="/#trust" className="text-slate-400 hover:text-white transition-colors">
                   Trust & Security
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#contact"
-                  className="text-xs text-slate-400 hover:text-white transition-colors"
-                >
+                <Link href="/#contact" className="text-slate-400 hover:text-white transition-colors">
                   Direct Inquiry
-                </a>
+                </Link>
               </li>
               <li>
                 <a
                   href="mailto:kartikshukla2301@gmail.com"
-                  className="text-xs text-slate-400 hover:text-white transition-colors"
+                  className="text-slate-400 hover:text-white transition-colors"
                 >
                   Email Developer
                 </a>
