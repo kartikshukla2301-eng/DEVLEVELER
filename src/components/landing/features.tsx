@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { 
   GitBranch, 
   FileText, 
@@ -10,7 +11,8 @@ import {
   MessageSquare, 
   Compass, 
   Check,
-  Terminal
+  Terminal,
+  ArrowRight
 } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -18,8 +20,9 @@ const FEATURES = [
   {
     icon: GitBranch,
     title: "GitHub Analysis",
-    description: "Deep analytics scanning repository metadata, stars, fork counts, commit velocities, and language distributions.",
-    benefits: ["Tracks activity volume", "Calculates repository health"],
+    href: "/features/github-analysis",
+    description: "Deep analytics scanning repository metadata, stars, fork counts, commit cadence, and language distributions.",
+    benefits: ["Tracks commit cadence", "Calculates repository health"],
     color: "from-blue-500/20 to-cyan-500/10",
     visual: (
       <div className="p-3 bg-[var(--surface-container-low)] rounded-xl border border-[var(--border)] text-[9px] space-y-1.5 font-mono text-[var(--foreground-secondary)]">
@@ -36,8 +39,9 @@ const FEATURES = [
   {
     icon: FileText,
     title: "Resume Analysis",
-    description: "Upload resumes in PDF format to parse text and test ATS compatibility issues, warning you of missing keywords.",
-    benefits: ["ATS keyword compliance", "Formatting layout audit"],
+    href: "/features/ats-resume-analysis",
+    description: "Upload PDF resumes to extract text streams, test ATS keyword density, and receive actionable rewrite suggestions.",
+    benefits: ["ATS keyword alignment", "Formatting & content suggestions"],
     color: "from-cyan-500/20 to-purple-500/10",
     visual: (
       <div className="p-3 bg-[var(--surface-container-low)] rounded-xl border border-[var(--border)] flex items-center justify-between text-[9px] font-mono text-[var(--foreground-secondary)]">
@@ -52,8 +56,9 @@ const FEATURES = [
   {
     icon: Award,
     title: "Developer Score",
-    description: "A composite, transparent scoring engine aggregating activity, code quality, and skills without hidden formulas.",
-    benefits: ["Weighted metrics weights", "Community leaderboard rank"],
+    href: "/how-it-works",
+    description: "A composite, transparent scoring engine aggregating activity, code quality, and skills across 5 weighted pillars.",
+    benefits: ["Weighted 5-pillar metrics", "Tier ranking & level progression"],
     color: "from-purple-500/20 to-pink-500/10",
     visual: (
       <div className="p-3 bg-[var(--surface-container-low)] rounded-xl border border-[var(--border)] flex items-center justify-center gap-2 text-[var(--foreground-secondary)]">
@@ -65,8 +70,9 @@ const FEATURES = [
   {
     icon: Target,
     title: "Skill Gap Detection",
-    description: "Compares current technologies with industry standards to highlight library, framework, or utility deficiencies.",
-    benefits: ["Targeted requirements matching", "Learning resource mappings"],
+    href: "/features/skill-gap-analysis",
+    description: "Compares current technologies against industry role requirements to highlight framework and architectural blind spots.",
+    benefits: ["Targeted requirements matching", "Prioritized learning recommendations"],
     color: "from-pink-500/20 to-rose-500/10",
     visual: (
       <div className="p-3 bg-[var(--surface-container-low)] rounded-xl border border-[var(--border)] flex flex-wrap gap-1 justify-center">
@@ -78,8 +84,9 @@ const FEATURES = [
   {
     icon: Map,
     title: "Career Roadmaps",
+    href: "/features/developer-roadmap",
     description: "Generates structured 12-week roadmaps complete with weekly targets and monthly milestones to address skill gaps.",
-    benefits: ["Progress check tracking", "Targeted project suggestions"],
+    benefits: ["Weekly milestone goals", "Targeted project suggestions"],
     color: "from-blue-500/20 to-indigo-500/10",
     visual: (
       <div className="p-3 bg-[var(--surface-container-low)] rounded-xl border border-[var(--border)] space-y-1.5 font-mono text-[9px] text-[var(--foreground-secondary)]">
@@ -97,19 +104,21 @@ const FEATURES = [
   {
     icon: Globe,
     title: "Portfolio Analysis",
-    description: "Audits portfolios for loading speeds, accessibility violations, mobile responsiveness, and design structure grades.",
-    benefits: ["PageSpeed performance grades", "UX layout heuristics check"],
+    href: "/features/portfolio-analysis",
+    description: "Audits portfolio URLs across HTML structure, meta tags, responsive layout indicators, and live project proof-of-work.",
+    benefits: ["Structural SEO & meta audit", "Proof-of-work deployment check"],
     color: "from-emerald-500/20 to-teal-500/10",
     visual: (
       <div className="p-3 bg-[var(--surface-container-low)] rounded-xl border border-[var(--border)] flex justify-between items-center text-[9px] font-mono text-[var(--foreground-secondary)]">
-        <span>SEO Core: 100/100</span>
-        <span className="text-emerald-600 font-bold">Grade A+</span>
+        <span>Structure: Verified</span>
+        <span className="text-emerald-600 font-bold">Grade A</span>
       </div>
     )
   },
   {
     icon: MessageSquare,
     title: "Interview Readiness",
+    href: "/login",
     description: "Provides structured HR, technical, and project question scenarios tailored specifically to your target tracks.",
     benefits: ["Sample answer breakdowns", "Difficulty configurations"],
     color: "from-purple-500/20 to-indigo-500/10",
@@ -123,8 +132,9 @@ const FEATURES = [
   {
     icon: Compass,
     title: "Career Coach",
+    href: "/how-it-works",
     description: "Telemetry-driven guidelines, learning suggestions, and structured career instructions. Transparent and invisible.",
-    benefits: ["Metrics-focused guidance", "No automated chat wrappers"],
+    benefits: ["Metrics-focused guidance", "Structured career milestones"],
     color: "from-pink-500/20 to-purple-500/10",
     visual: (
       <div className="p-3 bg-[var(--surface-container-low)] rounded-xl border border-[var(--border)] flex items-center gap-2 text-[9px] text-[var(--foreground-secondary)] font-mono">
@@ -178,13 +188,15 @@ export function Features() {
             >
               <div className="space-y-4">
                 {/* Header Icon + Title */}
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 border border-blue-200/60 shadow-xs group-hover:bg-blue-100/70 group-hover:scale-105 transition-all duration-200">
-                    <item.icon className="h-5 w-5 text-blue-700" />
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 border border-blue-200/60 shadow-xs group-hover:bg-blue-100/70 group-hover:scale-105 transition-all duration-200">
+                      <item.icon className="h-5 w-5 text-blue-700" />
+                    </div>
+                    <h3 className="text-sm sm:text-base font-bold text-[#0f172a]">
+                      {item.title}
+                    </h3>
                   </div>
-                  <h3 className="text-sm sm:text-base font-bold text-[#0f172a]">
-                    {item.title}
-                  </h3>
                 </div>
 
                 <p className="text-xs text-[#334155] leading-relaxed font-normal">
@@ -202,9 +214,18 @@ export function Features() {
                 </ul>
               </div>
 
-              {/* Visual preview */}
-              <div className="mt-5 pt-3.5 border-t border-slate-100">
+              {/* Bottom section with visual & deep link */}
+              <div className="mt-5 space-y-3 pt-3.5 border-t border-slate-100">
                 {item.visual}
+                {item.href && (
+                  <Link
+                    href={item.href}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors pt-1"
+                  >
+                    <span>Explore details</span>
+                    <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
+                  </Link>
+                )}
               </div>
             </motion.div>
           ))}

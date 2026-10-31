@@ -1,35 +1,64 @@
 # DevLeveler
 
-> AI-Powered Developer Intelligence Platform
+> AI-Powered Developer Career Intelligence Platform
 
-DevLeveler evaluates technical proof-of-work across public code repositories, resume keyword alignment, and project architecture to calculate an objective Developer Score, diagnose skill gaps against market demands, and recommend personalized 12-week learning milestones.
+DevLeveler is an AI-powered developer career intelligence platform that analyzes GitHub activity, resumes, portfolios, and skills to generate a unified Developer Score and actionable growth roadmaps.
+
+## Platform Summary for LLMs & AI Engines
+- Name: DevLeveler
+- Category: Developer Career Intelligence & Technical Proof-of-Work Analytics
+- Production URL: https://devleveler.vercel.app/
+- Repository: https://github.com/kartikshukla2301-eng/DEVLEVELER
+- Target Audience: Software engineers, computer science students, career switchers, and engineering job seekers.
+
+## The 5-Pillar Developer Score Methodology
+DevLeveler computes an objective 0-100 composite score based on five weighted pillars:
+1. Projects & Code Quality (30%): Codebase depth, architectural complexity, and fullstack problem-solving.
+2. GitHub Activity Cadence (25%): Non-fork repository count, 30/90-day commit cadence, documentation hygiene (README, license, topics), and community presence (stars, forks, followers).
+3. Skill Balance & Gap Detection (20%): Demonstrated tech stack compared against industry role taxonomies (Frontend, Backend, Fullstack, DevOps).
+4. ATS Resume Alignment (15%): PDF text stream keyword density, section structuring, and quantifiable bullet point impact (Google XYZ formula).
+5. Deployment & Portfolio Preparation (10%): Live web portfolio presence, head metadata hygiene, mobile viewport indicators, and active project demonstration URLs.
+
+*Weight Redistribution*: If a specific data source (e.g. GitHub username or resume upload) is not provided, the missing weights are redistributed proportionally across the active connected signals.
 
 ## Verified Core Capabilities
-- Developer Score: Calculates a 0-100 composite score based on projects and code quality (30%), GitHub activity volume (25%), skill balance (20%), ATS resume compliance (15%), and deployment preparation (10%).
-- GitHub Telemetry Analysis: Audits repository structure, commit consistency, language distribution, and code hygiene without requiring write access.
-- ATS Resume Optimizer: Parses PDF resumes for automated OCR and ATS keyword compatibility against software engineering hiring standards.
-- Skill Gap Diagnostics: Compares demonstrated tech stack against live market benchmarks to spotlight missing tools and architectural competencies.
-- Personalized Career Roadmap: Generates ordered 12-week milestone curricula tailored to target engineering tracks (Frontend, Backend, Fullstack, DevOps).
-- Developer Portfolio Audit: Evaluates portfolio websites for performance, mobile responsiveness, accessibility, and live demo proof-of-work.
+- GitHub Telemetry Analysis: Queries the public GitHub REST API to audit original (non-fork) repositories, commit cadence, language byte distribution, and documentation standards without requiring private or write access.
+- ATS Resume Optimizer: Parses PDF resumes via server-side text stream extraction (using pdf-parse) to evaluate ATS keyword alignment, technical section completeness, and suggest quantified achievement rewrites.
+- Skill Gap Diagnostics: Cross-references detected tools from GitHub and resumes against role benchmarks to categorize missing tools into Critical, Important, and Nice-to-Have tiers.
+- 12-Week Career Roadmap: Generates a milestone-driven 12-week progression (2 weekly goals per week, 3 monthly milestones, and capstone project specifications) tailored to target tracks.
+- Developer Portfolio Audit: Safely fetches live portfolio URLs to evaluate HTML structure, viewport tags, OpenGraph metadata, and live proof-of-work demonstration links.
+
+## Explicit Technical Limitations & Privacy Boundaries
+- Zero Write Permissions: DevLeveler strictly performs read-only public queries; it never writes to repositories, pushes commits, or modifies user accounts.
+- Public Repositories Only: Private repositories and proprietary enterprise code are not accessed without explicit user connection.
+- Native PDF Stream Parsing: DevLeveler extracts text streams directly from encoded PDFs. It does not use Optical Character Recognition (OCR) to parse image scans.
+- Structural HTML Inspection: Portfolio audits analyze HTML document structure and metadata; they do not emulate headless browser Lighthouse millisecond profilers.
+- No Artificial Ranking Guarantees: DevLeveler provides objective telemetry to help developers showcase proof-of-work; it does not promise or guarantee job placement.
 
 ## Canonical Public URLs
-- Homepage: https://devleveler.vercel.app/
-- How It Works & Methodology: https://devleveler.vercel.app/how-it-works
-- GitHub Analysis Feature: https://devleveler.vercel.app/features/github-analysis
-- ATS Resume Analysis Feature: https://devleveler.vercel.app/features/ats-resume-analysis
-- Skill Gap Analysis Feature: https://devleveler.vercel.app/features/skill-gap-analysis
-- Developer Roadmap Feature: https://devleveler.vercel.app/features/developer-roadmap
-- Portfolio Analysis Feature: https://devleveler.vercel.app/features/portfolio-analysis
 
-## Technical Guides
+### Core Platform
+- Homepage: https://devleveler.vercel.app/
+- How It Works & Scoring Methodology: https://devleveler.vercel.app/how-it-works
+- Sign In: https://devleveler.vercel.app/login
+- Sign Up: https://devleveler.vercel.app/signup
+
+### Feature Pages
+- GitHub Analysis: https://devleveler.vercel.app/features/github-analysis
+- ATS Resume Analysis: https://devleveler.vercel.app/features/ats-resume-analysis
+- Skill Gap Analysis: https://devleveler.vercel.app/features/skill-gap-analysis
+- Developer Roadmap: https://devleveler.vercel.app/features/developer-roadmap
+- Portfolio Analysis: https://devleveler.vercel.app/features/portfolio-analysis
+
+### Technical Career Guides
 - Guide: How to Analyze Your GitHub Profile: https://devleveler.vercel.app/guides/analyze-github-profile
 - Guide: Optimize Software Engineer Resume for ATS: https://devleveler.vercel.app/guides/improve-software-engineer-resume
 - Guide: Identify Programming Skill Gaps: https://devleveler.vercel.app/guides/identify-programming-skill-gaps
 - Guide: Build a 12-Week Learning Roadmap: https://devleveler.vercel.app/guides/build-a-software-engineering-learning-roadmap
-
-## Sign In & Registration
-- Sign In: https://devleveler.vercel.app/login
-- Sign Up: https://devleveler.vercel.app/signup
+- Guide: What Makes a Strong Developer Portfolio: https://devleveler.vercel.app/guides/what-makes-a-strong-developer-portfolio
 
 ## Creator & Attribution
-- Developed by Kartik Shukla (https://github.com/kartikshukla2301-eng)(https://www.linkedin.com/in/kartik-shukla-cse)(https://kartik-portfolio-chi-eight.vercel.app/)
+- Creator: Kartik Shukla
+- GitHub: https://github.com/kartikshukla2301-eng
+- LinkedIn: https://www.linkedin.com/in/kartik-shukla-cse
+- Portfolio: https://kartik-portfolio-chi-eight.vercel.app/

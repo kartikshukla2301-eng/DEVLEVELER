@@ -135,6 +135,11 @@ export function Footer() {
                   Build 12-Week Roadmap
                 </Link>
               </li>
+              <li>
+                <Link href="/guides/what-makes-a-strong-developer-portfolio" className="text-slate-400 hover:text-white transition-colors">
+                  Strong Portfolio Guide
+                </Link>
+              </li>
             </ul>
           </div>
 
