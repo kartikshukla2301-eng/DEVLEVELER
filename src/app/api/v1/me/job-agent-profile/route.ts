@@ -77,22 +77,26 @@ export async function GET(request: NextRequest) {
 
   const profileVersionSource = resume?.updatedAt ?? user.updatedAt;
 
+  // Job Agent's CandidateDetails.links is typed Dict[str, str] (no nulls allowed) —
+  // only include a key when there is an actual, non-empty string value.
+  const links: Record<string, string> = {};
+  if (connectedAccounts.github) links.github = connectedAccounts.github;
+  if (connectedAccounts.linkedin) links.linkedin = connectedAccounts.linkedin;
+  if (connectedAccounts.twitter) links.twitter = connectedAccounts.twitter;
+
   return NextResponse.json({
     schema_version: 1,
-    profile_version: Math.floor(profileVersionSource.getTime() / 1000),
+    // Job Agent's ProfileSnapshot.profile_version is typed as a string.
+    profile_version: String(Math.floor(profileVersionSource.getTime() / 1000)),
     synced_at: new Date().toISOString(),
     candidate: {
-      name: user.name ?? null,
+      name: user.name ?? "",
       email: user.email,
       education: resume?.education ?? [],
       experience: resume?.experience ?? [],
       skills: resume?.skills ?? [],
       projects: resume?.projects ?? [],
-      links: {
-        github: connectedAccounts.github ?? null,
-        linkedin: connectedAccounts.linkedin ?? null,
-        twitter: connectedAccounts.twitter ?? null,
-      },
+      links,
     },
     // Not modeled in DevLeveler today — left empty rather than guessed.
     preferences: {
