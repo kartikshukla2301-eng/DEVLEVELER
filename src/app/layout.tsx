@@ -21,15 +21,17 @@ const CANONICAL_URL = "https://devleveler.vercel.app";
 export const metadata: Metadata = {
   metadataBase: new URL(CANONICAL_URL),
   title: {
-    default: "DevLeveler — Know Your Developer Level",
+    default: "DevLeveler — Free AI Developer Score, GitHub & Resume Analyzer",
     template: "%s | DevLeveler",
   },
   description:
-    "Analyze your GitHub, Resume, Projects and Skills. Get your Developer Score, Skill Gap Analysis, and personalized Career Roadmap.",
+    "DevLeveler is a free AI tool that scores your developer profile 0-100 by analyzing your GitHub activity, resume, and skills. Get a skill gap report and a personalized 12-week career roadmap in minutes — no credit card required.",
   keywords: [
     "developer score",
+    "ai developer score",
     "github analyzer",
     "resume analyzer",
+    "ats resume checker",
     "skill gap analysis",
     "career roadmap",
     "developer portfolio",
@@ -45,9 +47,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: CANONICAL_URL,
-    title: "DevLeveler — Know Your Developer Level",
+    title: "DevLeveler — Free AI Developer Score, GitHub & Resume Analyzer",
     description:
-      "Analyze your GitHub, Resume, Projects and Skills. Get your Developer Score, Skill Gap Analysis, and personalized Career Roadmap.",
+      "Free AI tool that scores your developer profile 0-100 from your GitHub activity, resume, and skills — with a skill gap report and a personalized 12-week career roadmap.",
     siteName: "DevLeveler",
     images: [
       {
@@ -61,9 +63,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "DevLeveler — Know Your Developer Level",
+    title: "DevLeveler — Free AI Developer Score, GitHub & Resume Analyzer",
     description:
-      "Analyze your GitHub, Resume, Projects and Skills. Get your Developer Score, Skill Gap Analysis, and personalized Career Roadmap.",
+      "Free AI tool that scores your developer profile 0-100 from your GitHub activity, resume, and skills — with a skill gap report and a personalized 12-week career roadmap.",
     images: ["/github-social-preview.png"],
     creator: "@kartikshukla2301",
   },
@@ -90,7 +92,7 @@ const structuredData = [
     name: "DevLeveler",
     url: CANONICAL_URL,
     description:
-      "AI-Powered Developer Career Intelligence Platform for analyzing GitHub telemetry, ATS resumes, and career roadmaps.",
+      "Free AI tool that scores your developer profile 0-100 from your GitHub activity, resume, and skills — with a skill gap report and a personalized 12-week career roadmap.",
   },
   {
     "@context": "https://schema.org",
@@ -100,7 +102,7 @@ const structuredData = [
     applicationCategory: "DeveloperApplication",
     operatingSystem: "All",
     description:
-      "Analyze your GitHub, Resume, Projects and Skills. Get your Developer Score, Skill Gap Analysis, and personalized Career Roadmap.",
+      "DevLeveler is a free AI tool that scores your developer profile 0-100 by analyzing your GitHub activity, resume, and skills. Get a skill gap report and a personalized 12-week career roadmap in minutes.",
     offers: {
       "@type": "Offer",
       price: "0",
