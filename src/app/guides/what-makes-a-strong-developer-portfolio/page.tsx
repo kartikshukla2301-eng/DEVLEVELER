@@ -130,6 +130,31 @@ export default function StrongDeveloperPortfolioGuidePage() {
             </p>
           </div>
 
+          {/* Key Takeaways — scannable summary for readers and AI answer engines */}
+          <div className="my-8 p-6 rounded-2xl bg-white border border-slate-200 shadow-xs">
+            <h2 className="text-sm font-bold text-[#0f172a] uppercase tracking-wider mb-3">
+              Key Takeaways
+            </h2>
+            <ul className="space-y-2 text-sm text-[#334155]">
+              <li className="flex gap-2">
+                <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                <span>Feature <strong>3–4 production-deployed projects</strong> with real databases, auth, and HTTPS — not tutorial clones.</span>
+              </li>
+              <li className="flex gap-2">
+                <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                <span>Every project card should answer 4 questions in 15 seconds: the problem, the stack, the hardest challenge, and direct links.</span>
+              </li>
+              <li className="flex gap-2">
+                <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                <span>Fix OpenGraph meta tags and mobile viewport layout — recruiters frequently open links on mobile and in chat previews.</span>
+              </li>
+              <li className="flex gap-2">
+                <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                <span>Portfolio proof-of-work makes up <strong>10% of your DevLeveler Developer Score</strong> — GitHub activity and resume quality cover the rest.</span>
+              </li>
+            </ul>
+          </div>
+
           <div className="space-y-10 text-[#334155] text-sm sm:text-base leading-relaxed">
             <section className="space-y-4">
               <h2 className="text-xl sm:text-2xl font-extrabold text-[#0f172a]">
@@ -228,6 +253,39 @@ export default function StrongDeveloperPortfolioGuidePage() {
             >
               Analyze Portfolio <ArrowRight className="h-3.5 w-3.5" />
             </Link>
+          </section>
+
+          {/* Related Guides — deepens internal linking and topical context */}
+          <section className="my-10 pt-8 border-t border-[var(--border)]">
+            <h2 className="text-lg font-extrabold text-[#0f172a] mb-4">
+              Related Career Guides
+            </h2>
+            <div className="grid sm:grid-cols-2 gap-3">
+              <Link
+                href="/guides/analyze-github-profile"
+                className="p-4 rounded-xl border border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50/40 transition-colors text-xs font-semibold text-[#0f172a]"
+              >
+                How to Analyze Your GitHub Profile for Tech Jobs
+              </Link>
+              <Link
+                href="/guides/improve-software-engineer-resume"
+                className="p-4 rounded-xl border border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50/40 transition-colors text-xs font-semibold text-[#0f172a]"
+              >
+                How to Optimize a Software Engineer Resume for ATS
+              </Link>
+              <Link
+                href="/guides/identify-programming-skill-gaps"
+                className="p-4 rounded-xl border border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50/40 transition-colors text-xs font-semibold text-[#0f172a]"
+              >
+                How to Identify Programming Skill Gaps as a Developer
+              </Link>
+              <Link
+                href="/guides/build-a-software-engineering-learning-roadmap"
+                className="p-4 rounded-xl border border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50/40 transition-colors text-xs font-semibold text-[#0f172a]"
+              >
+                How to Build a Software Engineering Learning Roadmap
+              </Link>
+            </div>
           </section>
 
           {/* FAQs */}
