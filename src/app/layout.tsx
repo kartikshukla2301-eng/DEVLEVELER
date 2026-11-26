@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Lexend, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
+
+const GTM_ID = "GTM-5V9ZFSTT";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -132,11 +135,35 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: safeJsonLd }}
         />
+        {/* Google Tag Manager — loaded after the page is interactive so it never
+            blocks first paint. */}
+        <Script
+          id="gtm-loader"
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`}
+        />
+        <Script id="gtm-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+          `}
+        </Script>
       </head>
       <body
         suppressHydrationWarning
         className={`${lexend.variable} ${jetbrainsMono.variable} font-sans antialiased bg-[var(--background)] text-[var(--foreground)]`}
       >
+        {/* GTM noscript fallback — required by Google so tracking still fires for
+            visitors with JavaScript disabled. */}
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
         {children}
         <Analytics />
       </body>
